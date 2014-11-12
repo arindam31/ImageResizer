@@ -97,8 +97,13 @@ class Ui_MainWindow(QMainWindow):
                 '/home')
         d = os.listdir(fname)
         l = '\n'.join(d)
-        self.textEdit.setText(l)
+        self.show_text()
 
+
+    def show_text(self, MainWindow):
+        self.textEdit = QTextEdit(self)
+        MainWindow.setCentralWidget(self.textEdit)
+        self.textEdit.setText('Hiiiii')
     
 
 if __name__ == '__main__':
