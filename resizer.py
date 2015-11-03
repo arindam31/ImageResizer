@@ -12,16 +12,15 @@ def get_images_list(dir_loc):
             if f.split('.')[-1] in accepted_formats_tuple:
                 final_files_list.append(os.path.join(dir_loc,f))
     return final_files_list
-    
-    
 
-def resize_image(f, basewidth = 1024, suffix='new'):  # f is filename with complete path
+def resize_image(f, basewidth=1024, form='BMP', suffix='resized'):  # f is filename with complete path
     img = Image.open(f)
     print f
     wpercent = (basewidth/float(img.size[0]))
     hsize = int((float(img.size[1])*float(wpercent)))
     img_new = img.resize((basewidth,hsize), PIL.Image.ANTIALIAS)
-    img_new.save(f, format='BMP')
+    img_new.save(img, 'bmp')
+
 
 def resize_list_of_images(list_image):
     for image in list_image:
@@ -31,6 +30,7 @@ if __name__ == '__main__':
     #loc = raw_input('Enter location of folder')
     loc = r'C:\Users\Arindam\Desktop\Test_Image'
     list_images = get_images_list(loc)
+    print list_images
     resize_list_of_images(list_images)
 
 
