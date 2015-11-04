@@ -28,7 +28,9 @@ class Example(QtGui.QWidget):
     def initUI(self):      
         self.selectFileButton = QtGui.QPushButton('Browse file', self)
         self.selectFolderButton = QtGui.QPushButton('Browse folder', self)
+        self.list_pics = QtGui.QListWidget(self)
         self.pic = QtGui.QLabel('', self)
+
 
         self.layoutManager()
         self.selectFileButton.clicked.connect(self.selectFile)
@@ -41,8 +43,24 @@ class Example(QtGui.QWidget):
         self.hbox2 = QtGui.QHBoxLayout()
         hbox1.addStretch(1)
         self.hbox2.addStretch(1)
+        optionsGroup = QtGui.QGroupBox("Options")
+        echoLabel = QtGui.QLabel("Resize:")
+        echoComboBox = QtGui.QComboBox()
+        echoComboBox.addItem("Percentage %")
+        echoComboBox.addItem("Pixel")
+        self.echoLineEdit = QtGui.QLineEdit()
+        self.echoLineEdit.setFocus()
+
+        echoLayout = QtGui.QGridLayout()
+        echoLayout.addWidget(echoLabel, 0, 0)
+        echoLayout.addWidget(echoComboBox, 0, 1)
+        echoLayout.addWidget(self.echoLineEdit, 0, 2)
+        optionsGroup.setLayout(echoLayout)
+
         hbox1.addWidget(self.selectFolderButton)
         hbox1.addWidget(self.selectFileButton)
+        hbox1.addWidget(self.list_pics)
+        hbox1.addWidget(optionsGroup)
         self.hbox2.addWidget(self.pic)
         self.vbox = QtGui.QVBoxLayout()
         self.vbox.addStretch(1)
@@ -52,12 +70,14 @@ class Example(QtGui.QWidget):
 
     def showDialog(self):
         # This function is to provide a folder open dialog
+
         fname = QtGui.QFileDialog.getExistingDirectory(self, 'Open file',
                 '/home')
         if fname:
             d = os.listdir(fname)
-            l = '\n'.join(d)
-            print l
+            print d
+
+        self.list_pics.addItems(d)
 
     def selectFile(self):
         filedialog = QtGui.QFileDialog(self)
