@@ -88,8 +88,8 @@ class Example(QtGui.QWidget):
 
         hbox1.addWidget(self.selectFolderButton)
         hbox1.addWidget(self.selectFileButton)
-        hbox1.addWidget(self.list_pics)
-        hbox1.addWidget(optionsGroup)
+        self.hbox2.addWidget(self.list_pics)
+        self.hbox2.addWidget(optionsGroup)
         self.hbox2.addWidget(self.pic)
         self.vbox = QtGui.QVBoxLayout()
         self.vbox.addStretch(1)
