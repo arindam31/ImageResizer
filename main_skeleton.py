@@ -26,36 +26,65 @@ class Example(QtGui.QWidget):
         self.initUI()
         
     def initUI(self):      
-        self.selectFileButton = QtGui.QPushButton('Browse file', self)
-        self.selectFolderButton = QtGui.QPushButton('Browse folder', self)
-        self.list_pics = QtGui.QListWidget(self)
-        self.pic = QtGui.QLabel('', self)
-
 
         self.layoutManager()
-        self.selectFileButton.clicked.connect(self.selectFile)
-        self.selectFolderButton.clicked.connect(self.showDialog)
+
         self.setGeometry(300, 300, 290, 150)
         self.setWindowTitle('Photo Display')
 
     def layoutManager(self):
+
+        #Buttons for selectors
+        self.selectFileButton = QtGui.QPushButton('Browse file', self)
+        self.selectFolderButton = QtGui.QPushButton('Browse folder', self)
+
+        self.selectFileButton.clicked.connect(self.selectFile)
+        self.selectFolderButton.clicked.connect(self.showDialog)
+
+        #List for images list
+        self.list_pics = QtGui.QListWidget(self)
+
+        #Pic show area
+        self.pic = QtGui.QLabel('No image', self)
+
+        #Hbox 1
         hbox1 = QtGui.QHBoxLayout()
+
+        #Hbox 2
         self.hbox2 = QtGui.QHBoxLayout()
+
+        #Add stretch capability
+
         hbox1.addStretch(1)
         self.hbox2.addStretch(1)
-        optionsGroup = QtGui.QGroupBox("Options")
-        echoLabel = QtGui.QLabel("Resize:")
-        echoComboBox = QtGui.QComboBox()
-        echoComboBox.addItem("Percentage %")
-        echoComboBox.addItem("Pixel")
-        self.echoLineEdit = QtGui.QLineEdit()
-        self.echoLineEdit.setFocus()
 
-        echoLayout = QtGui.QGridLayout()
-        echoLayout.addWidget(echoLabel, 0, 0)
-        echoLayout.addWidget(echoComboBox, 0, 1)
-        echoLayout.addWidget(self.echoLineEdit, 0, 2)
-        optionsGroup.setLayout(echoLayout)
+        #Group for options
+        optionsGroup = QtGui.QGroupBox("Options")
+        optionsLabel = QtGui.QLabel("Resize:")
+
+        #Declare items in options
+        optionsComboBox = QtGui.QComboBox()
+        self.checkBoxProportion = QtGui.QCheckBox()
+        self.ProportionLabel = QtGui.QLabel('Keep Proportion Ratio')
+
+        #Add to combo box
+        optionsComboBox.addItem("Percentage %")
+        optionsComboBox.addItem("Pixel")
+
+        #Set default state of checkbox
+        self.checkBoxProportion.setChecked(True)
+
+        self.optionsLineEdit = QtGui.QLineEdit()
+        self.optionsLineEdit.setFocus()
+
+        optionsLayout = QtGui.QGridLayout()
+        optionsLayout.addWidget(optionsLabel, 0, 0)
+        optionsLayout.addWidget(optionsComboBox, 0, 1)
+        optionsLayout.addWidget(self.optionsLineEdit, 1, 0, 1, 2)
+        optionsLayout.addWidget(self.checkBoxProportion, 2, 0)
+        optionsLayout.addWidget(self.ProportionLabel, 2, 1)
+
+        optionsGroup.setLayout(optionsLayout)
 
         hbox1.addWidget(self.selectFolderButton)
         hbox1.addWidget(self.selectFileButton)
