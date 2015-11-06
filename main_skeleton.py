@@ -33,31 +33,37 @@ class Example(QtGui.QWidget):
         self.setWindowTitle('Photo Display')
 
     def layoutManager(self):
+        self.createTopGroupBox()
+        self.createOptionsGroupBox()
+        self.createDisplayAreaBox()
 
+        #Vbox Main
+        self.vboxMain = QtGui.QVBoxLayout()
+        #self.vboxMain.setMenuBar(self.menuBar)
+
+        self.vboxMain.addWidget(self.topGroupBox)
+        self.vboxMain.addWidget(self.optionsGroupBox)
+        self.vboxMain.addWidget(self.displayGroupBox)
+
+        self.setLayout(self.vboxMain)
+
+    def createTopGroupBox(self):
+        self.topGroupBox = QtGui.QGroupBox("Top Group Area")
         #Buttons for selectors
         self.selectFileButton = QtGui.QPushButton('Browse file', self)
         self.selectFolderButton = QtGui.QPushButton('Browse folder', self)
 
         self.selectFileButton.clicked.connect(self.selectFile)
         self.selectFolderButton.clicked.connect(self.showDialog)
+        layout = QtGui.QHBoxLayout()
+        layout.addWidget(self.selectFileButton)
+        layout.addWidget(self.selectFolderButton)
+        self.topGroupBox.setLayout(layout)
 
-        #List for images list
-        self.list_pics = QtGui.QListWidget(self)
-
-        #Pic show area
-        self.pic = QtGui.QLabel('No image', self)
-
-        #Hbox 1
-        hbox1 = QtGui.QHBoxLayout()
-
-        #Hbox 2
-        self.hbox2 = QtGui.QHBoxLayout()
-
-        #Add stretch capability
-
-        hbox1.addStretch(1)
-        self.hbox2.addStretch(1)
-
+    def createOptionsGroupBox(self):
+        self.optionsGroupBox = QtGui.QGroupBox("Options Area")
+        #layout = QtGui.QHBoxLayout()
+        optionsLayout = QtGui.QGridLayout()
         #Group for options
         optionsGroup = QtGui.QGroupBox("Options")
         optionsLabel = QtGui.QLabel("Resize:")
@@ -77,25 +83,27 @@ class Example(QtGui.QWidget):
         self.optionsLineEdit = QtGui.QLineEdit()
         self.optionsLineEdit.setFocus()
 
-        optionsLayout = QtGui.QGridLayout()
         optionsLayout.addWidget(optionsLabel, 0, 0)
         optionsLayout.addWidget(optionsComboBox, 0, 1)
         optionsLayout.addWidget(self.optionsLineEdit, 1, 0, 1, 2)
         optionsLayout.addWidget(self.checkBoxProportion, 2, 0)
         optionsLayout.addWidget(self.ProportionLabel, 2, 1)
+        self.optionsGroupBox.setLayout(optionsLayout)
 
-        optionsGroup.setLayout(optionsLayout)
 
-        hbox1.addWidget(self.selectFolderButton)
-        hbox1.addWidget(self.selectFileButton)
-        self.hbox2.addWidget(self.list_pics)
-        self.hbox2.addWidget(optionsGroup)
-        self.hbox2.addWidget(self.pic)
-        self.vbox = QtGui.QVBoxLayout()
-        self.vbox.addStretch(1)
-        self.vbox.addLayout(hbox1)
-        self.vbox.addLayout(self.hbox2)
-        self.setLayout(self.vbox)
+    def createDisplayAreaBox(self):
+        self.displayGroupBox = QtGui.QGroupBox("Display Area")
+        layout = QtGui.QHBoxLayout()
+
+        #List for images list
+        self.list_pics = QtGui.QListWidget(self)
+
+        #Pic show area
+        self.pic = QtGui.QLabel('No image', self)
+
+        layout.addWidget(self.list_pics)
+        layout.addWidget(self.pic)
+        self.displayGroupBox.setLayout(layout)
 
     def showDialog(self):
         # This function is to provide a folder open dialog
