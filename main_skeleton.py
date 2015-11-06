@@ -52,12 +52,16 @@ class Example(QtGui.QWidget):
         #Buttons for selectors
         self.selectFileButton = QtGui.QPushButton('Browse file', self)
         self.selectFolderButton = QtGui.QPushButton('Browse folder', self)
+        self.clearListButton = QtGui.QPushButton('Clear', self)
 
         self.selectFileButton.clicked.connect(self.selectFile)
         self.selectFolderButton.clicked.connect(self.showDialog)
+        self.clearListButton.clicked.connect(self.clearList)
+
         layout = QtGui.QHBoxLayout()
         layout.addWidget(self.selectFileButton)
         layout.addWidget(self.selectFolderButton)
+        layout.addWidget(self.clearListButton)
         self.topGroupBox.setLayout(layout)
 
     def createOptionsGroupBox(self):
@@ -122,13 +126,16 @@ class Example(QtGui.QWidget):
         print name
         if hasattr(self, 'pic'):
             self.pic.clear()
-            self.setLayout(self.vbox)
+            self.setLayout(self.vboxMain)
         self.setPicture(name)
 
     def setPicture(self, file_name):
         pixmap = QtGui.QPixmap(file_name)
-        pixmap = pixmap.scaledToHeight(200)
+        pixmap = pixmap.scaledToHeight(100)
         self.pic.setPixmap(pixmap)
+
+    def clearList(self):
+        self.list_pics.clear()
 
 def main():
     app = QtGui.QApplication(sys.argv)
