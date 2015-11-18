@@ -11,6 +11,7 @@ What all works in this one:
 import sys
 from PyQt4 import QtGui, QtCore
 import os
+import resizer
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -48,6 +49,12 @@ class Example(QtGui.QWidget):
         self.setLayout(self.vboxMain)
 
     def createTopGroupBox(self):
+        """
+        Top box has buttons
+        1) Browse File
+        2) Browse Folder
+        3) Clear
+        """
         self.topGroupBox = QtGui.QGroupBox("Top Group Area")
         #Buttons for selectors
         self.selectFileButton = QtGui.QPushButton('Browse file', self)
@@ -65,6 +72,12 @@ class Example(QtGui.QWidget):
         self.topGroupBox.setLayout(layout)
 
     def createOptionsGroupBox(self):
+        """
+        Option box has buttons
+        1) Options combobox
+        2) Resize label
+        3) Checkbox for proportion
+        """
         self.optionsGroupBox = QtGui.QGroupBox("Options Area")
         #layout = QtGui.QHBoxLayout()
         optionsLayout = QtGui.QGridLayout()
@@ -84,6 +97,7 @@ class Example(QtGui.QWidget):
         #Set default state of checkbox
         self.checkBoxProportion.setChecked(True)
 
+        #Edit box
         self.optionsLineEdit = QtGui.QLineEdit()
         self.optionsLineEdit.setFocus()
 
@@ -94,31 +108,55 @@ class Example(QtGui.QWidget):
         optionsLayout.addWidget(self.ProportionLabel, 2, 1)
         self.optionsGroupBox.setLayout(optionsLayout)
 
-
     def createDisplayAreaBox(self):
+        """
+        Display Box has following items:
+        1) List
+        2) Image area
+        """
         self.displayGroupBox = QtGui.QGroupBox("Display Area")
         layout = QtGui.QHBoxLayout()
 
         #List for images list
-        self.list_pics = QtGui.QListWidget(self)
+        #self.list_pics = QtGui.QListWidget(self)
+        self.table_pics = QtGui.QTableWidget(self)
+        self.table_pics.setWindowTitle("QTableWidget Example @pythonspot.com")
+        self.table_pics.resize(800, 400)
+        self.table_pics.setRowCount(4)
+        self.table_pics.setColumnCount(2)
+        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Size;").split(";"))
+
 
         #Pic show area
-        self.pic = QtGui.QLabel('No image', self)
+        #self.pic = QtGui.QLabel('No image', self)
 
-        layout.addWidget(self.list_pics)
-        layout.addWidget(self.pic)
+        layout.addWidget(self.table_pics)
+        #layout.addWidget(self.pic)
         self.displayGroupBox.setLayout(layout)
 
     def showDialog(self):
         # This function is to provide a folder open dialog
 
-        fname = QtGui.QFileDialog.getExistingDirectory(self, 'Open file',
+        fname = QtGui.QFileDialog.getExistingDirectory(self, 'Open folder',
                 '/home')
         if fname:
-            d = os.listdir(fname)
+            d = [os.path.join(str(fname), f) for f in os.listdir(str(fname))]
             print d
+        file_name_only = [os.path.basename(f) for f in d]
 
-        self.list_pics.addItems(d)
+        #self.list_pics.addItems(d)
+        self.table_pics.setRowCount(len(d))
+        #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
+        #self.table_pics.setVerticalHeaderLabels(QtCore.QString("V1;V2;V3;V4").split(";"))
+        for m, pic in enumerate(file_name_only):
+            photo_name = QtGui.QTableWidgetItem(pic)
+            photo_size = QtGui.QTableWidgetItem(resizer.size_of_photo_in_kilobytes(d[m]))
+            print photo_name
+            print '-----'
+            print photo_size
+            self.table_pics.setItem(m, 0, photo_name)
+            self.table_pics.setItem(m, 1, photo_size)
+
 
     def selectFile(self):
         filedialog = QtGui.QFileDialog(self)

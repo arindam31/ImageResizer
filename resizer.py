@@ -3,6 +3,7 @@ from PIL import Image
 import os
 
 def get_images_list(dir_loc):
+    dict_pics_details = {}
     """ Get only image files """
     all_files_list = os.listdir(dir_loc)
     accepted_formats_tuple = ('bmp', 'jpg', 'jpeg', 'png')
@@ -10,7 +11,7 @@ def get_images_list(dir_loc):
     if all_files_list:
         for f in all_files_list:
             if f.split('.')[-1] in accepted_formats_tuple:
-                final_files_list.append(os.path.join(dir_loc,f))
+                final_files_list.append(os.path.join(dir_loc, f))
     return final_files_list
 
 def resize_image(f, basewidth=1024, form='BMP', suffix='resized'):  # f is filename with complete path
@@ -19,7 +20,21 @@ def resize_image(f, basewidth=1024, form='BMP', suffix='resized'):  # f is filen
     wpercent = (basewidth/float(img.size[0]))
     hsize = int((float(img.size[1])*float(wpercent)))
     img_new = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
-    img_new.save(outfile, 'JPEG')
+    img_new.save(outfile, form)
+
+def resolution_of_file(ptr):
+    """Returns resolution as tuple"""
+    return ptr.size
+
+def get_photo_extension(ptr):
+    """"Returns format of file"""
+    return ptr.format
+
+def size_of_photo_in_megabytes(full_file_path):
+    round(os.stat(full_file_path).st_size, 3)
+
+def size_of_photo_in_kilobytes(full_file_path):
+    return os.stat(full_file_path).st_size/1024
 
 def resize_list_of_images(list_image):
     for image in list_image:
