@@ -30,7 +30,7 @@ class Example(QtGui.QWidget):
 
         self.layoutManager()
 
-        self.setGeometry(300, 300, 290, 150)
+        self.setGeometry(300, 100, 600, 400)
         self.setWindowTitle('Photo Display')
 
     def layoutManager(self):
@@ -45,7 +45,6 @@ class Example(QtGui.QWidget):
         self.vboxMain.addWidget(self.topGroupBox)
         self.vboxMain.addWidget(self.optionsGroupBox)
         self.vboxMain.addWidget(self.displayGroupBox)
-
         self.setLayout(self.vboxMain)
 
     def createTopGroupBox(self):
@@ -111,27 +110,27 @@ class Example(QtGui.QWidget):
     def createDisplayAreaBox(self):
         """
         Display Box has following items:
-        1) List
-        2) Image area
+        1) Table
         """
         self.displayGroupBox = QtGui.QGroupBox("Display Area")
-        layout = QtGui.QHBoxLayout()
+        self.displayGroupBox.sizeHint()
+        layout = QtGui.QVBoxLayout()
 
         #List for images list
-        #self.list_pics = QtGui.QListWidget(self)
         self.table_pics = QtGui.QTableWidget(self)
-        self.table_pics.setWindowTitle("QTableWidget Example @pythonspot.com")
-        self.table_pics.resize(800, 400)
-        self.table_pics.setRowCount(4)
-        self.table_pics.setColumnCount(2)
-        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Size;").split(";"))
+        self.table_pics.setWindowTitle("QTableWidget")
+
+        self.table_pics.setRowCount(4)  # Set no of rows needed at first launch
+        self.table_pics.setColumnCount(2)  # Set no of columns needed at first launch
+        self.table_pics.setColumnWidth(0, 400)  # 0 in the column number, 500 the width
+        self.table_pics.setColumnWidth(1, 200)  # 1 is the 2nd column
+        self.table_pics.horizontalHeader().setStretchLastSection(True)  # Stretches the last column till the end
+        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Size(kb);").split(";"))
 
 
-        #Pic show area
-        #self.pic = QtGui.QLabel('No image', self)
 
         layout.addWidget(self.table_pics)
-        #layout.addWidget(self.pic)
+        #layout.addStretch(1)
         self.displayGroupBox.setLayout(layout)
 
     def showDialog(self):
@@ -150,10 +149,8 @@ class Example(QtGui.QWidget):
         #self.table_pics.setVerticalHeaderLabels(QtCore.QString("V1;V2;V3;V4").split(";"))
         for m, pic in enumerate(file_name_only):
             photo_name = QtGui.QTableWidgetItem(pic)
-            photo_size = QtGui.QTableWidgetItem(resizer.size_of_photo_in_kilobytes(d[m]))
-            print photo_name
-            print '-----'
-            print photo_size
+            print resizer.size_of_photo_in_kilobytes(d[m])
+            photo_size = QtGui.QTableWidgetItem(str(resizer.size_of_photo_in_kilobytes(d[m])))
             self.table_pics.setItem(m, 0, photo_name)
             self.table_pics.setItem(m, 1, photo_size)
 
