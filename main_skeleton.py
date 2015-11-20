@@ -30,7 +30,7 @@ class Example(QtGui.QWidget):
 
         self.layoutManager()
 
-        self.setGeometry(300, 100, 600, 400)
+        self.setGeometry(300, 100, 800, 400)
         self.setWindowTitle('Photo Display')
 
     def layoutManager(self):
@@ -122,12 +122,13 @@ class Example(QtGui.QWidget):
         self.table_pics = QtGui.QTableWidget(self)
 
         self.table_pics.setRowCount(4)  # Set no of rows needed at first launch
-        self.table_pics.setColumnCount(3)  # Set no of columns needed at first launch
+        self.table_pics.setColumnCount(4)  # Set no of columns needed at first launch
         self.table_pics.setColumnWidth(0, 300)  # 0 in the column number, 500 the width
         self.table_pics.setColumnWidth(1, 100)  # 1 is the 2nd column
-        self.table_pics.setColumnWidth(2, 100)  # 2 is the 3rd column
+        self.table_pics.setColumnWidth(2, 80)  # 2 is the 3rd column
+        self.table_pics.setColumnWidth(3, 80)  # 2 is the 3rd column
         self.table_pics.horizontalHeader().setStretchLastSection(True)  # Stretches the last column till the end
-        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Size(kb);NewSize(kb)").split(";"))  # Assign headers
+        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Resolution;Size(kb);NewSize(kb)").split(";"))  # Assign headers
 
         layout.addWidget(self.table_pics)
         #layout.addStretch(1)
@@ -148,11 +149,15 @@ class Example(QtGui.QWidget):
         #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
         #self.table_pics.setVerticalHeaderLabels(QtCore.QString("V1;V2;V3;V4").split(";"))
         for m, pic in enumerate(file_name_only):
-            photo_name = QtGui.QTableWidgetItem(pic)
-            print resizer.size_of_photo_in_kilobytes(self.file_list[m])
-            photo_size = QtGui.QTableWidgetItem(str(resizer.size_of_photo_in_kilobytes(self.file_list[m])))
-            self.table_pics.setItem(m, 0, photo_name)  # Set name on 1st column
-            self.table_pics.setItem(m, 1, photo_size)  # Set size of file on 2nd
+            size_of_pic = resizer.size_of_photo_in_kilobytes(self.file_list[m])  # Get size
+            resolution_of_pic = resizer.resolution_of_file(self.file_list[m])  # Get resolution
+
+            photo_name_widget = QtGui.QTableWidgetItem(pic)  # Convert to widget item
+            photo_size_widget = QtGui.QTableWidgetItem(str(size_of_pic))  # Convert to widget item
+            resolution_widget = QtGui.QTableWidgetItem(str(resolution_of_pic))  # Convert to widget item
+            self.table_pics.setItem(m, 0, photo_name_widget)  # Set name on 1st column
+            self.table_pics.setItem(m, 1, resolution_widget)  # Set size of file on 2nd
+            self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 2nd
 
 
     def selectFile(self):
@@ -173,11 +178,19 @@ class Example(QtGui.QWidget):
         self.table_pics.clearContents()  # Clears the table
 
     def Process(self):
+        text_in_box = self.optionsLineEdit.text()
+        print repr(text_in_box)
+        if not text_in_box:
+            self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Hi'),
+                                               QtCore.QString('No option selected'),
+                                               )
+            return
+
         new_size_list = resizer.resize_list_of_images(self.file_list)
         print new_size_list
         for m, size in enumerate(new_size_list):
             photo_size = QtGui.QTableWidgetItem(str(size))
-            self.table_pics.setItem(m, 2, photo_size)  # Set name on 1st column
+            self.table_pics.setItem(m, 3, photo_size)  # Set name on 1st column
 
 
 def main():

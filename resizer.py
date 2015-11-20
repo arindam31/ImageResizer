@@ -24,13 +24,15 @@ def resize_image(f, basewidth=1024, form='BMP', suffix='resized'):  # f is filen
     new_size = size_of_photo_in_kilobytes(outfile)
     return new_size
 
-def resolution_of_file(ptr):
+def resolution_of_file(file_path):
     """Returns resolution as tuple"""
-    return ptr.size
+    img = Image.open(file_path)
+    return img.size
 
-def get_photo_extension(ptr):
+def get_photo_extension(file_path):
     """"Returns format of file"""
-    return ptr.format
+    img = Image.open(file_path)
+    return img.format
 
 def size_of_photo_in_megabytes(full_file_path):
     round(os.stat(full_file_path).st_size, 3)
