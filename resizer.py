@@ -2,6 +2,8 @@ import PIL
 from PIL import Image
 import os
 
+default_basewidth = 1024
+
 def get_images_list(dir_loc):
     dict_pics_details = {}
     """ Get only image files """
@@ -14,11 +16,16 @@ def get_images_list(dir_loc):
                 final_files_list.append(os.path.join(dir_loc, f))
     return final_files_list
 
-def resize_image(f, basewidth=1024, form='BMP', suffix='resized'):  # f is filename with complete path
+def resize_image(f, basewidth=None, percent=None, form='BMP', suffix='resized'):  # f is filename with complete path
+    if not basewidth:
+        basewidth = default_basewidth
     img = Image.open(f)
     outfile = f.split('.')[0] + 'new.%s' % form
-    wpercent = (basewidth/float(img.size[0]))
-    hsize = int((float(img.size[1])*float(wpercent)))
+    if basewidth:
+        wpercent = (basewidth/float(img.size[0]))
+        hsize = int((float(img.size[1])*float(wpercent)))
+    else:
+        hsize = int((float(img.size[1])*float(percent)))
     img_new = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
     img_new.save(outfile, form)
     new_size = size_of_photo_in_kilobytes(outfile)
@@ -40,11 +47,11 @@ def size_of_photo_in_megabytes(full_file_path):
 def size_of_photo_in_kilobytes(full_file_path):
     return os.stat(full_file_path).st_size/1024
 
-def resize_list_of_images(list_image):
+def resize_list_of_images(list_image, basewidth=None, percent=None):
     #Note: list_image must be a list of full image paths
     list_converted = []
     for image in list_image:
-        new_size = resize_image(image)
+        new_size = resize_image(image, basewidth, percent)
         list_converted.append(new_size)
     return list_converted
 

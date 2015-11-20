@@ -26,12 +26,14 @@ DOne:
 7) Double clicking should open file with default software
 8) Add Convert Button and attach to resizer - Done(works fine too)
 9) Display size of new created file - Done
+10) Popup added for no option to convert
+Show resolution
 
 
 Pending:
-Show resolution
+
 Add pull down for extension choice
-Text box for text for new  file
+Text box for text for new  file to be used to create converted image
 Textbox integer only for base width of converted image
 
 

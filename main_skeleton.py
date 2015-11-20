@@ -88,23 +88,23 @@ class Example(QtGui.QWidget):
         optionsLabel = QtGui.QLabel("Resize:")
 
         #Declare items in options
-        optionsComboBox = QtGui.QComboBox()
+        self.optionsComboBox = QtGui.QComboBox()
         self.checkBoxProportion = QtGui.QCheckBox()
         self.ProportionLabel = QtGui.QLabel('Keep Proportion Ratio')
 
         #Add to combo box
-        optionsComboBox.addItem("Percentage %")
-        optionsComboBox.addItem("Pixel")
+        self.optionsComboBox.addItem("Percentage %")
+        self.optionsComboBox.addItem("Pixel")
 
         #Set default state of checkbox
         self.checkBoxProportion.setChecked(True)
 
         #Edit box
-        self.optionsLineEdit = QtGui.QLineEdit()
+        self.optionsLineEdit = QtGui.QLineEdit()  # This is a text box for percentage or base width
         self.optionsLineEdit.setFocus()
 
         optionsLayout.addWidget(optionsLabel, 0, 0)
-        optionsLayout.addWidget(optionsComboBox, 0, 1)
+        optionsLayout.addWidget(self.optionsComboBox, 0, 1)
         optionsLayout.addWidget(self.optionsLineEdit, 1, 0, 1, 2)
         optionsLayout.addWidget(self.checkBoxProportion, 2, 0)
         optionsLayout.addWidget(self.ProportionLabel, 2, 1)
@@ -178,16 +178,29 @@ class Example(QtGui.QWidget):
         self.table_pics.clearContents()  # Clears the table
 
     def Process(self):
-        text_in_box = self.optionsLineEdit.text()
-        print repr(text_in_box)
+        percentage = True
+        print self.optionsComboBox.currentText()
+        if not self.optionsComboBox.currentText() == 'Percentage %':
+            percentage = False
+
+        text_in_box = self.optionsLineEdit.text()  # Get value from text box for base width or percentage
         if not text_in_box:
             self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Hi'),
                                                QtCore.QString('No option selected'),
                                                )
             return
+        try:
+            int(text_in_box)
+        except Exception:
+            self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Hi'),
+                                           QtCore.QString('You must enter Integer only'),
+                                           )
 
-        new_size_list = resizer.resize_list_of_images(self.file_list)
-        print new_size_list
+        if percentage:
+            new_size_list = resizer.resize_list_of_images(self.file_list, percent=int(text_in_box))
+        else:
+            new_size_list = resizer.resize_list_of_images(self.file_list, basewidth=int(text_in_box))
+
         for m, size in enumerate(new_size_list):
             photo_size = QtGui.QTableWidgetItem(str(size))
             self.table_pics.setItem(m, 3, photo_size)  # Set name on 1st column
