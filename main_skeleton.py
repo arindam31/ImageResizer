@@ -59,15 +59,18 @@ class Example(QtGui.QWidget):
         self.selectFileButton = QtGui.QPushButton('Browse file', self)
         self.selectFolderButton = QtGui.QPushButton('Browse folder', self)
         self.clearListButton = QtGui.QPushButton('Clear', self)
+        self.convertButton = QtGui.QPushButton('Convert', self)
 
         self.selectFileButton.clicked.connect(self.selectFile)
         self.selectFolderButton.clicked.connect(self.showDialog)
         self.clearListButton.clicked.connect(self.clearList)
+        self.convertButton.clicked.connect(self.Process)
 
         layout = QtGui.QHBoxLayout()
         layout.addWidget(self.selectFileButton)
         layout.addWidget(self.selectFolderButton)
         layout.addWidget(self.clearListButton)
+        layout.addWidget(self.convertButton)
         self.topGroupBox.setLayout(layout)
 
     def createOptionsGroupBox(self):
@@ -121,13 +124,12 @@ class Example(QtGui.QWidget):
         self.table_pics.setWindowTitle("QTableWidget")
 
         self.table_pics.setRowCount(4)  # Set no of rows needed at first launch
-        self.table_pics.setColumnCount(2)  # Set no of columns needed at first launch
-        self.table_pics.setColumnWidth(0, 400)  # 0 in the column number, 500 the width
-        self.table_pics.setColumnWidth(1, 200)  # 1 is the 2nd column
+        self.table_pics.setColumnCount(3)  # Set no of columns needed at first launch
+        self.table_pics.setColumnWidth(0, 300)  # 0 in the column number, 500 the width
+        self.table_pics.setColumnWidth(1, 100)  # 1 is the 2nd column
+        self.table_pics.setColumnWidth(2, 100)  # 2 is the 3rd column
         self.table_pics.horizontalHeader().setStretchLastSection(True)  # Stretches the last column till the end
-        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Size(kb);").split(";"))
-
-
+        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Size(kb);NewSize(kb)").split(";"))
 
         layout.addWidget(self.table_pics)
         #layout.addStretch(1)
@@ -139,18 +141,18 @@ class Example(QtGui.QWidget):
         fname = QtGui.QFileDialog.getExistingDirectory(self, 'Open folder',
                 '/home')
         if fname:
-            d = [os.path.join(str(fname), f) for f in os.listdir(str(fname))]
-            print d
-        file_name_only = [os.path.basename(f) for f in d]
+            self.file_list = [os.path.join(str(fname), f) for f in os.listdir(str(fname))]
+            print self.file_list
+        file_name_only = [os.path.basename(f) for f in self.file_list]
 
         #self.list_pics.addItems(d)
-        self.table_pics.setRowCount(len(d))
+        self.table_pics.setRowCount(len(self.file_list))
         #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
         #self.table_pics.setVerticalHeaderLabels(QtCore.QString("V1;V2;V3;V4").split(";"))
         for m, pic in enumerate(file_name_only):
             photo_name = QtGui.QTableWidgetItem(pic)
-            print resizer.size_of_photo_in_kilobytes(d[m])
-            photo_size = QtGui.QTableWidgetItem(str(resizer.size_of_photo_in_kilobytes(d[m])))
+            print resizer.size_of_photo_in_kilobytes(self.file_list[m])
+            photo_size = QtGui.QTableWidgetItem(str(resizer.size_of_photo_in_kilobytes(self.file_list[m])))
             self.table_pics.setItem(m, 0, photo_name)
             self.table_pics.setItem(m, 1, photo_size)
 
@@ -171,6 +173,10 @@ class Example(QtGui.QWidget):
 
     def clearList(self):
         self.list_pics.clear()
+
+    def Process(self):
+        resizer.resize_list_of_images(self.file_list)
+
 
 def main():
     app = QtGui.QApplication(sys.argv)
