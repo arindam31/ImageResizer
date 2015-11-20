@@ -22,9 +22,9 @@ UI:
 3) Add pull down for extension choice
 4) Text box for text for new  file
 5) suffix/prefix pull down
-6) Display extension and size of each file
+6) Display extension and size of each file - Done
 7) Double clicking should open file with default software
 8) Add Convert Button and attach to resizer - Done(works fine too)
-9) Display size of new created file
+9) Display size of new created file - Done
 
 

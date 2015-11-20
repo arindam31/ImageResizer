@@ -116,12 +116,10 @@ class Example(QtGui.QWidget):
         1) Table
         """
         self.displayGroupBox = QtGui.QGroupBox("Display Area")
-        self.displayGroupBox.sizeHint()
         layout = QtGui.QVBoxLayout()
 
         #List for images list
         self.table_pics = QtGui.QTableWidget(self)
-        self.table_pics.setWindowTitle("QTableWidget")
 
         self.table_pics.setRowCount(4)  # Set no of rows needed at first launch
         self.table_pics.setColumnCount(3)  # Set no of columns needed at first launch
@@ -129,7 +127,7 @@ class Example(QtGui.QWidget):
         self.table_pics.setColumnWidth(1, 100)  # 1 is the 2nd column
         self.table_pics.setColumnWidth(2, 100)  # 2 is the 3rd column
         self.table_pics.horizontalHeader().setStretchLastSection(True)  # Stretches the last column till the end
-        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Size(kb);NewSize(kb)").split(";"))
+        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Size(kb);NewSize(kb)").split(";"))  # Assign headers
 
         layout.addWidget(self.table_pics)
         #layout.addStretch(1)
@@ -143,18 +141,18 @@ class Example(QtGui.QWidget):
         if fname:
             self.file_list = [os.path.join(str(fname), f) for f in os.listdir(str(fname))]
             print self.file_list
-        file_name_only = [os.path.basename(f) for f in self.file_list]
+        file_name_only = [os.path.basename(f) for f in self.file_list]  # Get only file name into a list
 
         #self.list_pics.addItems(d)
-        self.table_pics.setRowCount(len(self.file_list))
+        self.table_pics.setRowCount(len(self.file_list))  # Based of no of files found, numbering of the rows
         #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
         #self.table_pics.setVerticalHeaderLabels(QtCore.QString("V1;V2;V3;V4").split(";"))
         for m, pic in enumerate(file_name_only):
             photo_name = QtGui.QTableWidgetItem(pic)
             print resizer.size_of_photo_in_kilobytes(self.file_list[m])
             photo_size = QtGui.QTableWidgetItem(str(resizer.size_of_photo_in_kilobytes(self.file_list[m])))
-            self.table_pics.setItem(m, 0, photo_name)
-            self.table_pics.setItem(m, 1, photo_size)
+            self.table_pics.setItem(m, 0, photo_name)  # Set name on 1st column
+            self.table_pics.setItem(m, 1, photo_size)  # Set size of file on 2nd
 
 
     def selectFile(self):
@@ -172,10 +170,14 @@ class Example(QtGui.QWidget):
         self.pic.setPixmap(pixmap)
 
     def clearList(self):
-        self.list_pics.clear()
+        self.table_pics.clearContents()  # Clears the table
 
     def Process(self):
-        resizer.resize_list_of_images(self.file_list)
+        new_size_list = resizer.resize_list_of_images(self.file_list)
+        print new_size_list
+        for m, size in enumerate(new_size_list):
+            photo_size = QtGui.QTableWidgetItem(str(size))
+            self.table_pics.setItem(m, 2, photo_size)  # Set name on 1st column
 
 
 def main():

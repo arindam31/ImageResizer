@@ -16,12 +16,12 @@ def get_images_list(dir_loc):
 
 def resize_image(f, basewidth=1024, form='BMP', suffix='resized'):  # f is filename with complete path
     img = Image.open(f)
-    outfile = f.split('.')[0] + 'new.jpeg'
+    outfile = f.split('.')[0] + 'new.%s' % form
     wpercent = (basewidth/float(img.size[0]))
     hsize = int((float(img.size[1])*float(wpercent)))
     img_new = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
     img_new.save(outfile, form)
-    new_size = size_of_photo_in_kilobytes(full_file_path)
+    new_size = size_of_photo_in_kilobytes(outfile)
     return new_size
 
 def resolution_of_file(ptr):
@@ -40,9 +40,11 @@ def size_of_photo_in_kilobytes(full_file_path):
 
 def resize_list_of_images(list_image):
     #Note: list_image must be a list of full image paths
+    list_converted = []
     for image in list_image:
-        resize_image(image)
-    print 'Done'
+        new_size = resize_image(image)
+        list_converted.append(new_size)
+    return list_converted
 
 if __name__ == '__main__':
     #loc = raw_input('Enter location of folder')
