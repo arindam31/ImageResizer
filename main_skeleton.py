@@ -37,6 +37,8 @@ class Example(QtGui.QWidget):
         self.createTopGroupBox()
         self.createOptionsGroupBox()
         self.createDisplayAreaBox()
+        self.createbottomGroupBox()
+
 
         #Vbox Main
         self.vboxMain = QtGui.QVBoxLayout()
@@ -45,6 +47,7 @@ class Example(QtGui.QWidget):
         self.vboxMain.addWidget(self.topGroupBox)
         self.vboxMain.addWidget(self.optionsGroupBox)
         self.vboxMain.addWidget(self.displayGroupBox)
+        self.vboxMain.addWidget(self.bottomGroupBox)
         self.setLayout(self.vboxMain)
 
     def createTopGroupBox(self):
@@ -54,23 +57,49 @@ class Example(QtGui.QWidget):
         2) Browse Folder
         3) Clear
         """
-        self.topGroupBox = QtGui.QGroupBox("Top Group Area")
+        self.topGroupBox = QtGui.QGroupBox("Select Action")
+
+       #  self.topGroupBox.setStyleSheet("""
+       #  QGroupBox
+       # {
+       #     background-color: rgb(255, 255, 200);
+       #     border:1px solid rgb(255, 171, 255);
+       # }
+       # """
+       #  )
+
         #Buttons for selectors
         self.selectFileButton = QtGui.QPushButton('Browse file', self)
         self.selectFolderButton = QtGui.QPushButton('Browse folder', self)
         self.clearListButton = QtGui.QPushButton('Clear', self)
         self.convertButton = QtGui.QPushButton('Convert', self)
 
+        #self.convertButton.setStyleSheet("font-size:18px;background-color:red;\
+        #border: 1px solid blue")
+
+        #Assign shortcuts
+        self.selectFileButton.setShortcut(QtGui.QKeySequence("Ctrl+F"))
+        self.convertButton.setShortcut(QtGui.QKeySequence("Ctrl+P"))
+        self.selectFolderButton.setShortcut(QtGui.QKeySequence("Ctrl+D"))
+        self.clearListButton.setShortcut(QtGui.QKeySequence("Ctrl+C"))
+
+        # Connect button to functions
         self.selectFileButton.clicked.connect(self.selectFile)
         self.selectFolderButton.clicked.connect(self.showDialog)
         self.clearListButton.clicked.connect(self.clearList)
         self.convertButton.clicked.connect(self.Process)
+
+
+        self.btn = QtGui.QPushButton('Test', self)
+        self.btn.move(200, 120)
+        self.btn.clicked.connect(self.barUpdate)
 
         layout = QtGui.QHBoxLayout()
         layout.addWidget(self.selectFileButton)
         layout.addWidget(self.selectFolderButton)
         layout.addWidget(self.clearListButton)
         layout.addWidget(self.convertButton)
+        layout.addWidget(self.btn)
         self.topGroupBox.setLayout(layout)
 
     def createOptionsGroupBox(self):
@@ -84,20 +113,15 @@ class Example(QtGui.QWidget):
         #layout = QtGui.QHBoxLayout()
         optionsLayout = QtGui.QGridLayout()
         #Group for options
-        optionsGroup = QtGui.QGroupBox("Options")
-        optionsLabel = QtGui.QLabel("Resize:")
+        optionsLabel = QtGui.QLabel("Resize by:")
 
         #Declare items in options
         self.optionsComboBox = QtGui.QComboBox()
         self.checkBoxProportion = QtGui.QCheckBox()
-        self.ProportionLabel = QtGui.QLabel('Keep Proportion Ratio')
 
         #Add to combo box
         self.optionsComboBox.addItem("Percentage %")
         self.optionsComboBox.addItem("Pixel")
-
-        #Set default state of checkbox
-        self.checkBoxProportion.setChecked(True)
 
         #Edit box
         self.optionsLineEdit = QtGui.QLineEdit()  # This is a text box for percentage or base width
@@ -106,8 +130,6 @@ class Example(QtGui.QWidget):
         optionsLayout.addWidget(optionsLabel, 0, 0)
         optionsLayout.addWidget(self.optionsComboBox, 0, 1)
         optionsLayout.addWidget(self.optionsLineEdit, 1, 0, 1, 2)
-        optionsLayout.addWidget(self.checkBoxProportion, 2, 0)
-        optionsLayout.addWidget(self.ProportionLabel, 2, 1)
         self.optionsGroupBox.setLayout(optionsLayout)
 
     def createDisplayAreaBox(self):
@@ -134,6 +156,14 @@ class Example(QtGui.QWidget):
         #layout.addStretch(1)
         self.displayGroupBox.setLayout(layout)
 
+    def createbottomGroupBox(self):
+        self.bottomGroupBox = QtGui.QGroupBox("Display Area")
+        layout = QtGui.QVBoxLayout()
+
+        self.progressbar = QtGui.QProgressBar(self)
+        layout.addWidget(self.progressbar)
+        self.bottomGroupBox.setLayout(layout)
+
     def showDialog(self):
         # This function is to provide a folder open dialog
 
@@ -142,6 +172,8 @@ class Example(QtGui.QWidget):
         if fname:
             self.file_list = [os.path.join(str(fname), f) for f in os.listdir(str(fname))]
             print self.file_list
+        else:
+            return
         file_name_only = [os.path.basename(f) for f in self.file_list]  # Get only file name into a list
 
         #self.list_pics.addItems(d)
@@ -160,9 +192,22 @@ class Example(QtGui.QWidget):
             self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 2nd
 
 
+    def barUpdate(self):
+        self.barState = 0
+        while self.barState < len(self.file_list):
+            self.barState += 1
+            self.progressbar.setValue(self.barState*100/len(self.file_list))
+
+
     def selectFile(self):
         filedialog = QtGui.QFileDialog(self)
+
         name = filedialog.getOpenFileName()
+        if name:  # This is to handle Cancel action
+            pass
+        else:
+            return
+
         print name
         if hasattr(self, 'pic'):
             self.pic.clear()
@@ -176,6 +221,8 @@ class Example(QtGui.QWidget):
 
     def clearList(self):
         self.table_pics.clearContents()  # Clears the table
+        if hasattr(self, 'file_list'):
+            self.file_list = []
 
     def Process(self):
         percentage = True
@@ -185,25 +232,39 @@ class Example(QtGui.QWidget):
 
         text_in_box = self.optionsLineEdit.text()  # Get value from text box for base width or percentage
         if not text_in_box:
-            self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Hi'),
+            self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Warning'),
                                                QtCore.QString('No option selected'),
                                                )
             return
         try:
             int(text_in_box)
         except Exception:
-            self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Hi'),
+            self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Warning'),
                                            QtCore.QString('You must enter Integer only'),
                                            )
+            return
+        if not hasattr(self, 'file_list'):
+            self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Warning'),
+                                               QtCore.QString('No files added to convert'),
+                                               )
+            return
+
+        self.convertButton.setDisabled(True)
 
         if percentage:
             new_size_list = resizer.resize_list_of_images(self.file_list, percent=int(text_in_box))
+
         else:
             new_size_list = resizer.resize_list_of_images(self.file_list, basewidth=int(text_in_box))
 
         for m, size in enumerate(new_size_list):
             photo_size = QtGui.QTableWidgetItem(str(size))
             self.table_pics.setItem(m, 3, photo_size)  # Set name on 1st column
+
+        self.convertButton.setStyleSheet("font-size:18px;background-color:green;\
+        border: 1px solid blue")
+        #self.barUpdate()
+        self.convertButton.setDisabled(False)
 
 
 def main():

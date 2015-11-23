@@ -53,7 +53,9 @@ def resize_list_of_images(list_image, basewidth=None, percent=None):
     for image in list_image:
         new_size = resize_image(image, basewidth, percent)
         list_converted.append(new_size)
+
     return list_converted
+
 
 if __name__ == '__main__':
     #loc = raw_input('Enter location of folder')

@@ -14,21 +14,21 @@ Resizer:
 2) Ratio can be locked or unlocked
 3) Choice of extension can be provided
 4) Choice of suffix or prefix can be provided
-5) Single file choice can be provided - Implemented
+5) Single file choice can be provided - Done
 6) Resizing by DPI (Resolution stays the same..DPI changes)
 
 UI:
 
-DOne:
+Done:
 1) Add pull down for percentage/ratio - Done
 2) Add checkbox to keep proportion - Done
 5) suffix/prefix pull down
 6) Display extension and size of each file - Done
 7) Double clicking should open file with default software
-8) Add Convert Button and attach to resizer - Done(works fine too)
+8) Add Convert Button and attach to resizer - Done
 9) Display size of new created file - Done
-10) Popup added for no option to convert
-Show resolution
+10) Popup for no option to convert and integer only - Done
+11) Show resolution - Done
 
 
 Pending:
