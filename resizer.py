@@ -16,7 +16,7 @@ def get_images_list(dir_loc):
                 final_files_list.append(os.path.join(dir_loc, f))
     return final_files_list
 
-def resize_image(f, basewidth=None, percent=None, form='JPEG', suffix='resized'):  # f is filename with complete path
+def resize_image(f, basewidth=None, form='JPEG', suffix='resized'):  # f is filename with complete path
     if not basewidth:
         basewidth = default_basewidth
 
@@ -29,8 +29,7 @@ def resize_image(f, basewidth=None, percent=None, form='JPEG', suffix='resized')
     if basewidth:
         wpercent = (basewidth/float(img.size[0]))
         hsize = int((float(img.size[1])*float(wpercent)))
-    else:
-        hsize = int((float(img.size[1])*float(percent)))
+
     img_new = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
     img_new.save(outfile, form)
     new_size = size_of_photo_in_kilobytes(outfile)

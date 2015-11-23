@@ -39,7 +39,8 @@ Textbox integer only for base width of converted image
 Break display into 2 panes: Browsing and listing pane - Too much negatives here
 
 Defects:
-Selection of a folder with other contents ...app detects other files too
+Selection of a folder with other contents ...app detects other files too - Fixed
+If 100% selected
 
 
 

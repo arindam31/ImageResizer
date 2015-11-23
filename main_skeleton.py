@@ -188,9 +188,12 @@ class Example(QtGui.QWidget):
         self.table_pics.setRowCount(len(self.file_list))  # Based of no of files found, numbering of the rows
         #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
         #self.table_pics.setVerticalHeaderLabels(QtCore.QString("V1;V2;V3;V4").split(";"))
+        self.detail_dict = {}  # Dict with all details
+
         for m, pic in enumerate(file_name_only):
             size_of_pic = resizer.size_of_photo_in_kilobytes(self.file_list[m])  # Get size
             resolution_of_pic = resizer.resolution_of_file(self.file_list[m])  # Get resolution
+            self.detail_dict[pic] = {'size': size_of_pic, 'resolution': resolution_of_pic}
 
             photo_name_widget = QtGui.QTableWidgetItem(pic)  # Convert to widget item
             photo_size_widget = QtGui.QTableWidgetItem(str(size_of_pic))  # Convert to widget item
@@ -198,6 +201,8 @@ class Example(QtGui.QWidget):
             self.table_pics.setItem(m, 0, photo_name_widget)  # Set name on 1st column
             self.table_pics.setItem(m, 1, resolution_widget)  # Set size of file on 2nd
             self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 2nd
+
+        print self.detail_dict
 
         if self.convertButton.isEnabled():
             pass
@@ -267,19 +272,17 @@ class Example(QtGui.QWidget):
 
         new_size_list = []
         if percentage:
-            percent = int(text_in_box)
-            basewidth = None
+            percent_factor = float(text_in_box)/100  #  The basewidth will be based on this percentage
         else:
-            percent = None
-            basewidth = int(text_in_box)
-
+            percent_factor = 1
 
         while self.barState < len(self.file_list):
             for img in self.file_list:
-                size = resizer.resize_image(img, percent=percent, basewidth=basewidth)
+                width = self.detail_dict[os.path.basename(img)]['resolution'][0]
+                size = resizer.resize_image(img, basewidth= int(width * percent_factor))
                 new_size_list.append(size)
                 self.barState += 1
-                self.progressbar.setValue(self.barState*100/len(self.file_list))
+                self.progressbar.setValue(self.barState * 100/len(self.file_list))
 
 
         for m, size in enumerate(new_size_list):
@@ -289,7 +292,7 @@ class Example(QtGui.QWidget):
         #self.convertButton.setStyleSheet("font-size:18px;background-color:green;\
         #border: 1px solid blue")
         #self.barUpdate()
-        self.convertButton.setDisabled(True)
+        self.convertButton.setDisabled(True)  # We don't want to let user press process button again without reset
 
 
 def main():
