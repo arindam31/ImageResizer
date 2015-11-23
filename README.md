@@ -36,7 +36,10 @@ Pending:
 Add pull down for extension choice
 Text box for text for new  file to be used to create converted image
 Textbox integer only for base width of converted image
-Break display into 2 panes: Browsing and listing pane
+Break display into 2 panes: Browsing and listing pane - Too much negatives here
+
+Defects:
+Selection of a folder with other contents ...app detects other files too
 
 
 

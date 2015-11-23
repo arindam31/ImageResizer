@@ -16,11 +16,16 @@ def get_images_list(dir_loc):
                 final_files_list.append(os.path.join(dir_loc, f))
     return final_files_list
 
-def resize_image(f, basewidth=None, percent=None, form='BMP', suffix='resized'):  # f is filename with complete path
+def resize_image(f, basewidth=None, percent=None, form='JPEG', suffix='resized'):  # f is filename with complete path
     if not basewidth:
         basewidth = default_basewidth
-    img = Image.open(f)
-    outfile = f.split('.')[0] + 'new.%s' % form
+
+    try:
+        img = Image.open(f)
+    except IOError:
+        return 'Invalid file'
+
+    outfile = f.split('.')[0] + '_%s.%s' % (suffix, form)
     if basewidth:
         wpercent = (basewidth/float(img.size[0]))
         hsize = int((float(img.size[1])*float(wpercent)))
@@ -61,6 +66,5 @@ if __name__ == '__main__':
     #loc = raw_input('Enter location of folder')
     loc = r'D:\inchowar\Desktop\Pics'
     list_images = get_images_list(loc)
-    print list_images
     resize_list_of_images(list_images)
 
