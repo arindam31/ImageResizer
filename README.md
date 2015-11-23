@@ -15,6 +15,7 @@ Resizer:
 3) Choice of extension can be provided
 4) Choice of suffix or prefix can be provided
 5) Single file choice can be provided - Implemented
+6) Resizing by DPI (Resolution stays the same..DPI changes)
 
 UI:
 
@@ -35,6 +36,7 @@ Pending:
 Add pull down for extension choice
 Text box for text for new  file to be used to create converted image
 Textbox integer only for base width of converted image
+Break display into 2 panes: Browsing and listing pane
 
 
 
