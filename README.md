@@ -33,14 +33,19 @@ Done:
 
 Pending:
 
-Add pull down for extension choice
-Text box for text for new  file to be used to create converted image
-Textbox integer only for base width of converted image
-Break display into 2 panes: Browsing and listing pane - Too much negatives here
+Add pull down for extension choice - BMP
+Add menu bar - Add file, Add folder, Help , About, Reset App
+Add tool tip for everything
+Double click in table should open image
+Add checkbox before each file....
+Check ALL, Uncheck ALL buttons to be provided
+Single File image preview
+Display Estimated size after conversion
 
 Defects:
 Selection of a folder with other contents ...app detects other files too - Fixed
-If 100% selected
+If 100% selected..file size still changes...band width was 1024 by default... - Fixed
+
 
 
 

@@ -93,17 +93,12 @@ class Example(QtGui.QWidget):
         self.clearListButton.clicked.connect(self.resetEverything)
         self.convertButton.clicked.connect(self.Process)
 
-
-        self.btn = QtGui.QPushButton('Test', self)
-        self.btn.move(200, 120)
-        self.btn.clicked.connect(self.barUpdate)
-
+        #Create layout
         layout = QtGui.QHBoxLayout()
         layout.addWidget(self.selectFileButton)
         layout.addWidget(self.selectFolderButton)
         layout.addWidget(self.clearListButton)
         layout.addWidget(self.convertButton)
-        layout.addWidget(self.btn)
         self.topGroupBox.setLayout(layout)
 
     def createOptionsGroupBox(self):
@@ -241,7 +236,7 @@ class Example(QtGui.QWidget):
         self.convertButton.setDisabled(False)
         if hasattr(self, 'file_list'):
             del self.file_list
-        self.progressbar.reset()
+        self.progressbar.reset()  # Get the progress bar to zero level
 
 
     def Process(self):
@@ -272,7 +267,7 @@ class Example(QtGui.QWidget):
 
         new_size_list = []
         if percentage:
-            percent_factor = float(text_in_box)/100  #  The basewidth will be based on this percentage
+            percent_factor = float(text_in_box)/100  # The base width will be based on this percentage
         else:
             percent_factor = 1
 
@@ -289,9 +284,6 @@ class Example(QtGui.QWidget):
             photo_size = QtGui.QTableWidgetItem(str(size))
             self.table_pics.setItem(m, 3, photo_size)  # Set name on 1st column
 
-        #self.convertButton.setStyleSheet("font-size:18px;background-color:green;\
-        #border: 1px solid blue")
-        #self.barUpdate()
         self.convertButton.setDisabled(True)  # We don't want to let user press process button again without reset
 
 
