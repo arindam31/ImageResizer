@@ -32,8 +32,10 @@ class Example(QtGui.QWidget):
 
         self.setGeometry(300, 100, 800, 400)
         self.setWindowTitle('Photo Display')
+        self.createMenuBar()
 
     def layoutManager(self):
+        #self.createMenuBar()
         self.createTopGroupBox()
         self.createOptionsGroupBox()
         self.createDisplayAreaBox()
@@ -53,6 +55,15 @@ class Example(QtGui.QWidget):
         #Apply an image background
         palette.setBrush(QtGui.QPalette.Background, QtGui.QBrush(QtGui.QPixmap('D:\inchowar\Pictures\Kashmir\Snow_capped_mountains.jpg')))
         self.setPalette(palette)
+
+    def createMenuBar(self):
+        self.fileMenu = QtGui.QMenu("&File", self)
+        self.OptionsMenu = QtGui.QMenu("&Options", self)
+        self.HelpMenu = QtGui.QMenu("&Help", self)
+        menu = QtGui.QMenuBar(self)
+        menu.addMenu(self.fileMenu)
+        menu.addMenu(self.OptionsMenu)
+        menu.addMenu(self.HelpMenu)
 
     def createTopGroupBox(self):
         """
@@ -80,6 +91,12 @@ class Example(QtGui.QWidget):
 
         #self.convertButton.setStyleSheet("font-size:18px;background-color:red;\
         #border: 1px solid blue")
+
+        #Adding tool tips for buttons
+        self.selectFileButton.setToolTip('Press this button to select single file to convert')
+        self.selectFolderButton.setToolTip('Press this button to select a folder with pictures to convert')
+        self.clearListButton.setToolTip('Press this button to clear the list below')
+        self.convertButton.setToolTip('Press this button to start conversion of pictures')
 
         #Assign shortcuts
         self.selectFileButton.setShortcut(QtGui.QKeySequence("Ctrl+F"))
@@ -116,7 +133,6 @@ class Example(QtGui.QWidget):
 
         #Declare items in options
         self.optionsComboBox = QtGui.QComboBox()
-        self.checkBoxProportion = QtGui.QCheckBox()
 
         #Add to combo box
         self.optionsComboBox.addItem("Percentage %")
@@ -126,6 +142,7 @@ class Example(QtGui.QWidget):
         valueLabel = QtGui.QLabel("Enter Value:")
         self.optionsLineEdit = QtGui.QLineEdit()  # This is a text box for percentage or base width
         self.optionsLineEdit.setFocus()
+        self.optionsLineEdit.setToolTip('Enter a number after selecting reduction choice i.e by percentage or by width')
 
         optionsLayout.addWidget(optionsLabel, 0, 0)
         optionsLayout.addWidget(self.optionsComboBox, 0, 1)
