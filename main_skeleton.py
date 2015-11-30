@@ -88,9 +88,9 @@ class Example(QtGui.QWidget):
        #  )
 
         #Buttons for selectors
-        self.selectFileButton = QtGui.QPushButton('Browse file', self)
-        self.selectFolderButton = QtGui.QPushButton('Browse folder', self)
-        self.clearListButton = QtGui.QPushButton('Clear', self)
+        self.selectFileButton = QtGui.QPushButton('Choose file', self)
+        self.selectFolderButton = QtGui.QPushButton('Choose folder', self)
+        self.clearListButton = QtGui.QPushButton('Clear list', self)
         self.convertButton = QtGui.QPushButton('Convert', self)
 
         #self.convertButton.setStyleSheet("font-size:18px;background-color:red;\
@@ -159,8 +159,8 @@ class Example(QtGui.QWidget):
 
     def createDisplayAreaBox(self):
         """
-        Display Box has following items:
-        1) Table
+        Display Box has a Table that shows files selected to be processed
+
         """
         self.displayGroupBox = QtGui.QGroupBox("Display Area")
         self.displayGroupBox.setMaximumHeight(500)
@@ -169,17 +169,15 @@ class Example(QtGui.QWidget):
         #List for images list
         self.table_pics = QtGui.QTableWidget(self)
 
-        #self.table_pics.setRowCount(4)  # Set no of rows needed at first launch
         self.table_pics.setColumnCount(4)  # Set no of columns needed at first launch
-        self.table_pics.setColumnWidth(0, 300)  # 0 in the column number, 500 the width
+        self.table_pics.setColumnWidth(0, 300)  # 0 in the column number, 300 the width
         self.table_pics.setColumnWidth(1, 100)  # 1 is the 2nd column
         self.table_pics.setColumnWidth(2, 80)  # 2 is the 3rd column
-        self.table_pics.setColumnWidth(3, 80)  # 2 is the 3rd column
+        self.table_pics.setColumnWidth(3, 80)  # 3 is the 4th column
         self.table_pics.horizontalHeader().setStretchLastSection(True)  # Stretches the last column till the end
-        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Resolution;Size(kb);NewSize(kb)").split(";"))  # Assign headers
+        self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Resolution;Size(kb);NewSize(kb)").split(";"))
 
         layout.addWidget(self.table_pics)
-        #layout.addStretch(1)
         self.displayGroupBox.setLayout(layout)
 
     def createbottomGroupBox(self):
@@ -198,7 +196,6 @@ class Example(QtGui.QWidget):
 
         selected_dir_name = QtGui.QFileDialog.getExistingDirectory(self, 'Open folder',
                 '/home')
-        print selected_dir_name
         list_with_pics = resizer.get_images_list(str(selected_dir_name))
 
         if list_with_pics:
@@ -208,31 +205,50 @@ class Example(QtGui.QWidget):
             return 'No images found'
         file_name_only = [os.path.basename(f) for f in self.file_list]  # Get only file name into a list
 
-        #self.list_pics.addItems(d)
         self.table_pics.setRowCount(len(self.file_list))  # Based of no of files found, numbering of the rows
-        #table.setVerticalHeaderLabels(QString("V1;V2;V3;V4").split(";"))
-        #self.table_pics.setVerticalHeaderLabels(QtCore.QString("V1;V2;V3;V4").split(";"))
         self.detail_dict = {}  # Dict with all details
+        self.checked_list = []  # List to store checked items
 
         for m, pic in enumerate(file_name_only):
             size_of_pic = resizer.size_of_photo_in_kilobytes(self.file_list[m])  # Get size
             resolution_of_pic = resizer.resolution_of_file(self.file_list[m])  # Get resolution
-            self.detail_dict[pic] = {'size': size_of_pic, 'resolution': resolution_of_pic}
+            self.detail_dict[pic] = {'size': size_of_pic,
+                                     'resolution': resolution_of_pic,
+                                     'full_path': os.path.join(str(selected_dir_name), pic)
+                                    }
 
+            self.checked_list.append(self.file_list[m])
             photo_name_widget = QtGui.QTableWidgetItem(pic)  # Convert to widget item
+            photo_name_widget.setFlags(QtCore.Qt.ItemIsUserCheckable |  # Adding checkbox to each row
+                                  QtCore.Qt.ItemIsEnabled)
+            photo_name_widget.setCheckState(QtCore.Qt.Checked)  # Set them as checked
             photo_size_widget = QtGui.QTableWidgetItem(str(size_of_pic))  # Convert to widget item
             resolution_widget = QtGui.QTableWidgetItem(str(resolution_of_pic))  # Convert to widget item
             self.table_pics.setItem(m, 0, photo_name_widget)  # Set name on 1st column
             self.table_pics.setItem(m, 1, resolution_widget)  # Set size of file on 2nd
             self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 2nd
+        self.table_pics.itemClicked.connect(self.handleItemClicked)
 
-        print self.detail_dict
+        if len(self.file_list) * 60 > 500:
+            pass
+        else:
+            self.displayGroupBox.setMaximumHeight(len(self.file_list) * 60)
+
 
         if self.convertButton.isEnabled():
             pass
         else:
             self.convertButton.setDisabled(True)
 
+
+    def handleItemClicked(self, item):
+        self.file_name_only = [os.path.basename(f) for f in self.checked_list]
+        if item.checkState() == QtCore.Qt.Checked:
+            if item.text() not in self.file_name_only:
+                self.checked_list.append(self.detail_dict[str(item.text())]['full_path'])
+        else:
+            if item.text() in self.file_name_only:
+                self.checked_list.remove(self.detail_dict[str(item.text())]['full_path'])
 
     def barUpdate(self):
         self.barState = 0
@@ -302,11 +318,12 @@ class Example(QtGui.QWidget):
 
         while self.barState < len(self.file_list):
             for img in self.file_list:
-                width = self.detail_dict[os.path.basename(img)]['resolution'][0]
-                size = resizer.resize_image(img, basewidth= int(width * percent_factor))
-                new_size_list.append(size)
-                self.barState += 1
-                self.progressbar.setValue(self.barState * 100/len(self.file_list))
+                if img in self.checked_list:
+                    width = self.detail_dict[os.path.basename(img)]['resolution'][0]
+                    size = resizer.resize_image(img, basewidth= int(width * percent_factor))
+                    new_size_list.append(size)
+                    self.barState += 1
+                    self.progressbar.setValue(self.barState * 100/len(self.checked_list))
 
 
         for m, size in enumerate(new_size_list):

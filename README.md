@@ -30,18 +30,17 @@ Done:
 10) Popup for no option to convert and integer only - Done
 11) Show resolution - Done
 12) Add tool tip for everything
-
+13) Add checkbox before each file. - Done
+14) Display Estimated size after conversion - DOne
 
 Pending:
 
 Add pull down for extension choice - BMP
 Add menu bar - Add file, Add folder, Help , About, Reset App
-
 Double click in table should open image
-Add checkbox before each file....
 Check ALL, Un check ALL buttons to be provided
 Single File image preview
-Display Estimated size after conversion
+Add a pop up for finished conversion..no of files converted
 
 Defects:
 Selection of a folder with other contents ...app detects other files too - Fixed
