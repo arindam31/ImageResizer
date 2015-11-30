@@ -39,7 +39,7 @@ Add menu bar - Add file, Add folder, Help , About, Reset App
 
 Double click in table should open image
 Add checkbox before each file....
-Check ALL, Uncheck ALL buttons to be provided
+Check ALL, Un check ALL buttons to be provided
 Single File image preview
 Display Estimated size after conversion
 

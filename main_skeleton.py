@@ -32,6 +32,7 @@ class Example(QtGui.QWidget):
 
         self.setGeometry(300, 100, 800, 400)
         self.setWindowTitle('Photo Display')
+        self.setMaximumHeight(800)
         self.createMenuBar()
 
     def layoutManager(self):
@@ -43,7 +44,6 @@ class Example(QtGui.QWidget):
 
         #Vbox Main
         self.vboxMain = QtGui.QVBoxLayout()
-        #self.vboxMain.setMenuBar(self.menuBar)
 
         self.vboxMain.addWidget(self.topGroupBox)
         self.vboxMain.addWidget(self.optionsGroupBox)
@@ -53,7 +53,7 @@ class Example(QtGui.QWidget):
         palette = QtGui.QPalette()
 
         #Apply an image background
-        palette.setBrush(QtGui.QPalette.Background, QtGui.QBrush(QtGui.QPixmap('D:\inchowar\Pictures\Kashmir\Snow_capped_mountains.jpg')))
+        palette.setBrush(QtGui.QPalette.Background, QtGui.QBrush(QtGui.QPixmap('wallpaper.jpg')))
         self.setPalette(palette)
 
     def createMenuBar(self):
@@ -61,6 +61,8 @@ class Example(QtGui.QWidget):
         self.OptionsMenu = QtGui.QMenu("&Options", self)
         self.HelpMenu = QtGui.QMenu("&Help", self)
         menu = QtGui.QMenuBar(self)
+        menu.setGeometry(QtCore.QRect(0, 0, 800, 25))
+        menu.setObjectName(_fromUtf8("menubar"))
         menu.addMenu(self.fileMenu)
         menu.addMenu(self.OptionsMenu)
         menu.addMenu(self.HelpMenu)
@@ -73,6 +75,8 @@ class Example(QtGui.QWidget):
         3) Clear
         """
         self.topGroupBox = QtGui.QGroupBox("Select Action")
+        self.topGroupBox.setMaximumHeight(100)
+        self.topGroupBox.setFlat(True)
 
        #  self.topGroupBox.setStyleSheet("""
        #  QGroupBox
@@ -116,6 +120,7 @@ class Example(QtGui.QWidget):
         layout.addWidget(self.selectFolderButton)
         layout.addWidget(self.clearListButton)
         layout.addWidget(self.convertButton)
+        #layout.addStretch(1)
         self.topGroupBox.setLayout(layout)
 
     def createOptionsGroupBox(self):
@@ -126,7 +131,7 @@ class Example(QtGui.QWidget):
         3) Checkbox for proportion
         """
         self.optionsGroupBox = QtGui.QGroupBox("Options Area")
-        #layout = QtGui.QHBoxLayout()
+        self.optionsGroupBox.setMaximumHeight(150)
         optionsLayout = QtGui.QGridLayout()
         #Group for options
         optionsLabel = QtGui.QLabel("Resize by:")
@@ -148,6 +153,8 @@ class Example(QtGui.QWidget):
         optionsLayout.addWidget(self.optionsComboBox, 0, 1)
         optionsLayout.addWidget(valueLabel, 1, 0)
         optionsLayout.addWidget(self.optionsLineEdit, 1, 1, 1, 2)
+        optionsLayout.setColumnStretch(1, 20)
+        optionsLayout.setColumnStretch(2, 20)
         self.optionsGroupBox.setLayout(optionsLayout)
 
     def createDisplayAreaBox(self):
@@ -156,12 +163,13 @@ class Example(QtGui.QWidget):
         1) Table
         """
         self.displayGroupBox = QtGui.QGroupBox("Display Area")
+        self.displayGroupBox.setMaximumHeight(500)
         layout = QtGui.QVBoxLayout()
 
         #List for images list
         self.table_pics = QtGui.QTableWidget(self)
 
-        self.table_pics.setRowCount(4)  # Set no of rows needed at first launch
+        #self.table_pics.setRowCount(4)  # Set no of rows needed at first launch
         self.table_pics.setColumnCount(4)  # Set no of columns needed at first launch
         self.table_pics.setColumnWidth(0, 300)  # 0 in the column number, 500 the width
         self.table_pics.setColumnWidth(1, 100)  # 1 is the 2nd column
@@ -176,11 +184,13 @@ class Example(QtGui.QWidget):
 
     def createbottomGroupBox(self):
         self.bottomGroupBox = QtGui.QGroupBox("Progress update")
+        self.bottomGroupBox.setMaximumHeight(60)
         layout = QtGui.QVBoxLayout()
 
         self.progressbar = QtGui.QProgressBar(self)
 
         layout.addWidget(self.progressbar)
+        layout.addStretch(1)
         self.bottomGroupBox.setLayout(layout)
 
     def showDialog(self):
@@ -188,12 +198,14 @@ class Example(QtGui.QWidget):
 
         selected_dir_name = QtGui.QFileDialog.getExistingDirectory(self, 'Open folder',
                 '/home')
+        print selected_dir_name
         list_with_pics = resizer.get_images_list(str(selected_dir_name))
 
         if list_with_pics:
             self.file_list = [os.path.join(str(selected_dir_name), f) for f in os.listdir(str(selected_dir_name))]
         else:
-            return
+            print 'No images'
+            return 'No images found'
         file_name_only = [os.path.basename(f) for f in self.file_list]  # Get only file name into a list
 
         #self.list_pics.addItems(d)
