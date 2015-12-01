@@ -227,7 +227,8 @@ class Example(QtGui.QWidget):
             self.table_pics.setItem(m, 0, photo_name_widget)  # Set name on 1st column
             self.table_pics.setItem(m, 1, resolution_widget)  # Set size of file on 2nd
             self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 2nd
-        self.table_pics.itemClicked.connect(self.handleItemClicked)
+        self.table_pics.itemClicked.connect(self.handleItemClicked)  # Connecting to
+        # the function that handles what happens after selecting a checkbox
 
         if len(self.file_list) * 60 > 500:
             pass
@@ -324,6 +325,8 @@ class Example(QtGui.QWidget):
                     new_size_list.append(size)
                     self.barState += 1
                     self.progressbar.setValue(self.barState * 100/len(self.checked_list))
+                else:
+                    new_size_list.append('Skipped')
 
 
         for m, size in enumerate(new_size_list):
