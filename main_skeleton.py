@@ -229,6 +229,7 @@ class Example(QtGui.QWidget):
             self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 2nd
         self.table_pics.itemClicked.connect(self.handleItemClicked)  # Connecting to
         # the function that handles what happens after selecting a checkbox
+        self.table_pics.doubleClicked.connect(self.print_hi)
 
         if len(self.file_list) * 60 > 500:
             pass
@@ -240,6 +241,9 @@ class Example(QtGui.QWidget):
             pass
         else:
             self.convertButton.setDisabled(True)
+
+    def print_hi(self):
+        print 'Hi'
 
 
     def handleItemClicked(self, item):
