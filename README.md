@@ -41,6 +41,7 @@ Double click in table should open image
 Check ALL, Un check ALL buttons to be provided
 Single File image preview
 Add a pop up for finished conversion..no of files converted
+Disable editing of cell
 
 Defects:
 Selection of a folder with other contents ...app detects other files too - Fixed

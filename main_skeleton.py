@@ -227,6 +227,8 @@ class Example(QtGui.QWidget):
             self.table_pics.setItem(m, 0, photo_name_widget)  # Set name on 1st column
             self.table_pics.setItem(m, 1, resolution_widget)  # Set size of file on 2nd
             self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 2nd
+
+
         self.table_pics.itemClicked.connect(self.handleItemClicked)  # Connecting to
         # the function that handles what happens after selecting a checkbox
         self.table_pics.doubleClicked.connect(self.print_hi)
@@ -244,6 +246,9 @@ class Example(QtGui.QWidget):
 
     def print_hi(self):
         print 'Hi'
+        row = self.table_pics.currentRow()
+        self.item = self.table_pics.itemAt(row, 1)
+        print str(self.item.text())
 
 
     def handleItemClicked(self, item):
