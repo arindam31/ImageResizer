@@ -16,7 +16,7 @@ def get_images_list(dir_loc):
                 final_files_list.append(os.path.join(dir_loc, f))
     return final_files_list
 
-def resize_image(f, basewidth=None, form='JPEG', suffix='resized'):  # f is filename with complete path
+def resize_image(f, basewidth=None, form='BMP', suffix='resized'):  # f is filename with complete path
     if not basewidth:
         basewidth = default_basewidth
 

@@ -12,6 +12,7 @@ import sys
 from PyQt4 import QtGui, QtCore
 import os
 import resizer
+import math
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -140,7 +141,7 @@ class Example(QtGui.QWidget):
         self.optionsComboBox = QtGui.QComboBox()
 
         #Add to combo box
-        self.optionsComboBox.addItem("Percentage %")
+        self.optionsComboBox.addItem("Percentage % (Size of Image)")
         self.optionsComboBox.addItem("Pixel")
 
         #Edit box
@@ -198,26 +199,21 @@ class Example(QtGui.QWidget):
                 '/home')
         list_with_pics = resizer.get_images_list(str(selected_dir_name))
 
-        if list_with_pics:
-            self.file_list = [os.path.join(str(selected_dir_name), f) for f in os.listdir(str(selected_dir_name))]
-        else:
-            print 'No images'
-            return 'No images found'
-        file_name_only = [os.path.basename(f) for f in self.file_list]  # Get only file name into a list
+        file_name_only = [os.path.basename(f) for f in list_with_pics]  # Get only file name into a list
 
-        self.table_pics.setRowCount(len(self.file_list))  # Based of no of files found, numbering of the rows
+        self.table_pics.setRowCount(len(list_with_pics))  # Based of no of files found, numbering of the rows
         self.detail_dict = {}  # Dict with all details
         self.checked_list = []  # List to store checked items
 
         for m, pic in enumerate(file_name_only):
-            size_of_pic = resizer.size_of_photo_in_kilobytes(self.file_list[m])  # Get size
-            resolution_of_pic = resizer.resolution_of_file(self.file_list[m])  # Get resolution
+            size_of_pic = resizer.size_of_photo_in_kilobytes(list_with_pics[m])  # Get size
+            resolution_of_pic = resizer.resolution_of_file(list_with_pics[m])  # Get resolution
             self.detail_dict[pic] = {'size': size_of_pic,
                                      'resolution': resolution_of_pic,
                                      'full_path': os.path.join(str(selected_dir_name), pic)
                                     }
 
-            self.checked_list.append(self.file_list[m])
+            self.checked_list.append(list_with_pics[m])
             photo_name_widget = QtGui.QTableWidgetItem(pic)  # Convert to widget item
             photo_name_widget.setFlags(QtCore.Qt.ItemIsUserCheckable |  # Adding checkbox to each row
                                   QtCore.Qt.ItemIsEnabled)
@@ -233,16 +229,18 @@ class Example(QtGui.QWidget):
         # the function that handles what happens after selecting a checkbox
         self.table_pics.doubleClicked.connect(self.print_hi)
 
-        if len(self.file_list) * 60 > 500:
+        if len(list_with_pics) * 60 > 500:
             pass
         else:
-            self.displayGroupBox.setMaximumHeight(len(self.file_list) * 60)
+            #self.displayGroupBox.setMaximumHeight(len(list_with_pics) * 60)
+            self.displayGroupBox.setMaximumHeight(100)
 
 
         if self.convertButton.isEnabled():
             pass
         else:
             self.convertButton.setDisabled(True)
+        self.file_list = list_with_pics
 
     def print_hi(self):
         print 'Hi'
@@ -288,6 +286,7 @@ class Example(QtGui.QWidget):
 
     def resetEverything(self):
         self.table_pics.clearContents()  # Clears the table
+        #self.table_pics.
         self.convertButton.setDisabled(False)
         if hasattr(self, 'file_list'):
             del self.file_list
@@ -322,7 +321,7 @@ class Example(QtGui.QWidget):
 
         new_size_list = []
         if percentage:
-            percent_factor = float(text_in_box)/100  # The base width will be based on this percentage
+            percent_factor = math.sqrt(float(text_in_box)/100)  # The base width will be based on this percentage
         else:
             percent_factor = 1
 
@@ -330,6 +329,7 @@ class Example(QtGui.QWidget):
             for img in self.file_list:
                 if img in self.checked_list:
                     width = self.detail_dict[os.path.basename(img)]['resolution'][0]
+                    print int(width * percent_factor)
                     size = resizer.resize_image(img, basewidth= int(width * percent_factor))
                     new_size_list.append(size)
                     self.barState += 1
