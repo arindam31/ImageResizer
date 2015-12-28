@@ -50,7 +50,7 @@ Defects:
 4. Double clicking enables text editing the boxes. - FIXED
 5. Percentage doesnt reduce exactly when image is JPEG - Now image reduced by size of file - FIXED
 6. Choose file , then folder...pics dont show
-7. If empty folder selected...does not return error
+7. If empty folder selected...does not return error - FIXED - (Showing pop up)
 
 
 

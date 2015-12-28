@@ -200,6 +200,13 @@ class Example(QtGui.QWidget):
                 '/home')
         list_with_pics = resizer.get_images_list(str(selected_dir_name))
 
+        if not list_with_pics:
+            self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Warning'),
+                                               QtCore.QString('No images found'),
+                                               )
+            return
+
+
         file_name_only = [os.path.basename(f) for f in list_with_pics]  # Get only file name into a list
 
         self.table_pics.setRowCount(len(list_with_pics))  # Based of no of files found, numbering of the rows
