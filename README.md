@@ -47,9 +47,10 @@ Defects:
 1. Selection of a folder with other contents ...app detects other files too - Fixed
 2. If 100% selected..file size still changes...band width was 1024 by default... - Fixed
 3. Clearing the list does not remove rows...Numbering still present..clicking is possible.
-4. Double clicking enables text editing the boxes.
-5. Percentage doesnt reduce exactly when image is JPEG - Now image reduced by size of file
+4. Double clicking enables text editing the boxes. - FIXED
+5. Percentage doesnt reduce exactly when image is JPEG - Now image reduced by size of file - FIXED
 6. Choose file , then folder...pics dont show
+7. If empty folder selected...does not return error
 
 
 

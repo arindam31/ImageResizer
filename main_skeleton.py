@@ -169,6 +169,7 @@ class Example(QtGui.QWidget):
 
         #List for images list
         self.table_pics = QtGui.QTableWidget(self)
+        self.table_pics.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
 
         self.table_pics.setColumnCount(4)  # Set no of columns needed at first launch
         self.table_pics.setColumnWidth(0, 300)  # 0 in the column number, 300 the width
@@ -232,8 +233,7 @@ class Example(QtGui.QWidget):
         if len(list_with_pics) * 60 > 500:
             pass
         else:
-            #self.displayGroupBox.setMaximumHeight(len(list_with_pics) * 60)
-            self.displayGroupBox.setMaximumHeight(100)
+            self.displayGroupBox.setMaximumHeight(len(list_with_pics) * 60)
 
 
         if self.convertButton.isEnabled():
@@ -241,11 +241,14 @@ class Example(QtGui.QWidget):
         else:
             self.convertButton.setDisabled(True)
         self.file_list = list_with_pics
+        print self.table_pics.rowCount()
+
 
     def print_hi(self):
         print 'Hi'
         row = self.table_pics.currentRow()
-        self.item = self.table_pics.itemAt(row, 1)
+        print "Row no:", row
+        self.item = self.table_pics.item(row, 0)
         print str(self.item.text())
 
 
@@ -286,7 +289,7 @@ class Example(QtGui.QWidget):
 
     def resetEverything(self):
         self.table_pics.clearContents()  # Clears the table
-        #self.table_pics.
+        self.table_pics.reset()
         self.convertButton.setDisabled(False)
         if hasattr(self, 'file_list'):
             del self.file_list
