@@ -32,25 +32,30 @@ Done:
 12) Add tool tip for everything
 13) Add checkbox before each file. - Done
 14) Display Estimated size after conversion - DOne
+15) Disable editing of cell - Done
 
 Pending:
 
-Add pull down for extension choice - BMP
+Add pull down for extension choice - BMP - Done (now ext is detected and used)
 Add menu bar - Add file, Add folder, Help , About, Reset App
 Double click in table should open image
 Check ALL, Un check ALL buttons to be provided
 Single File image preview
 Add a pop up for finished conversion..no of files converted
-Disable editing of cell
+
+Set limits for text box values
+Add quality options in UI
 
 Defects:
 1. Selection of a folder with other contents ...app detects other files too - Fixed
 2. If 100% selected..file size still changes...band width was 1024 by default... - Fixed
-3. Clearing the list does not remove rows...Numbering still present..clicking is possible.
+3. Clearing the list does not remove rows...Numbering still present..clicking is possible. - FIXED
 4. Double clicking enables text editing the boxes. - FIXED
 5. Percentage doesnt reduce exactly when image is JPEG - Now image reduced by size of file - FIXED
-6. Choose file , then folder...pics dont show
+6. Choose file , then folder...pics dont show - FIXED
 7. If empty folder selected...does not return error - FIXED - (Showing pop up)
+8. Single file conversion not working...make diff convert branch for each scenario
+9. Image resizing formula works fine for bmp..but for other formats do not work so well
 
 
 

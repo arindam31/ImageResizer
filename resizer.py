@@ -16,7 +16,9 @@ def get_images_list(dir_loc):
                 final_files_list.append(os.path.join(dir_loc, f))
     return final_files_list
 
-def resize_image(f, basewidth=None, form='BMP', suffix='resized'):  # f is filename with complete path
+def resize_image(f, basewidth=None, suffix='resized', QUALITY=None):  # f is filename with complete path
+    import imghdr
+    image_type = imghdr.what(f)
     if not basewidth:
         basewidth = default_basewidth
 
@@ -25,13 +27,14 @@ def resize_image(f, basewidth=None, form='BMP', suffix='resized'):  # f is filen
     except IOError:
         return 'Invalid file'
 
-    outfile = f.split('.')[0] + '_%s.%s' % (suffix, form)
+    outfile = f.split('.')[0] + '_%s.%s' % (suffix, image_type)
     if basewidth:
         wpercent = (basewidth/float(img.size[0]))
         hsize = int((float(img.size[1])*float(wpercent)))
 
     img_new = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
-    img_new.save(outfile, form)
+    img_new.save(outfile, image_type.upper(), quality=QUALITY)
+    del image_type
     new_size = size_of_photo_in_kilobytes(outfile)
     return new_size
 

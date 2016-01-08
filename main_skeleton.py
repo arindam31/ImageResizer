@@ -164,6 +164,7 @@ class Example(QtGui.QWidget):
 
         """
         self.displayGroupBox = QtGui.QGroupBox("Display Area")
+        self.pic = QtGui.QLabel('', self)
         self.displayGroupBox.setMaximumHeight(500)
         layout = QtGui.QVBoxLayout()
 
@@ -180,6 +181,7 @@ class Example(QtGui.QWidget):
         self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Resolution;Size(kb);NewSize(kb)").split(";"))
 
         layout.addWidget(self.table_pics)
+        layout.addWidget(self.pic)
         self.displayGroupBox.setLayout(layout)
 
     def createbottomGroupBox(self):
@@ -198,6 +200,9 @@ class Example(QtGui.QWidget):
 
         selected_dir_name = QtGui.QFileDialog.getExistingDirectory(self, 'Open folder',
                 '/home')
+        if not selected_dir_name:
+            return
+
         list_with_pics = resizer.get_images_list(str(selected_dir_name))
 
         if not list_with_pics:
@@ -239,8 +244,8 @@ class Example(QtGui.QWidget):
 
         if len(list_with_pics) * 60 > 500:
             pass
-        else:
-            self.displayGroupBox.setMaximumHeight(len(list_with_pics) * 60)
+        #else:
+        #    self.displayGroupBox.setMaximumHeight(len(list_with_pics) * 60)
 
 
         if self.convertButton.isEnabled():
@@ -248,8 +253,6 @@ class Example(QtGui.QWidget):
         else:
             self.convertButton.setDisabled(True)
         self.file_list = list_with_pics
-        print self.table_pics.rowCount()
-
 
     def print_hi(self):
         print 'Hi'
@@ -277,17 +280,23 @@ class Example(QtGui.QWidget):
 
     def selectFile(self):
         filedialog = QtGui.QFileDialog(self)
-
-        name = filedialog.getOpenFileName()
-        if name:  # This is to handle Cancel action
-            pass
+        if not hasattr(self, 'file_list'):
+            self.file_list = []
+            self.checked_list = []
+        self.single_pic = filedialog.getOpenFileName()
+        if self.single_pic:  # This is , if someone selects "Cancel"
+            self.file_list.append(self.single_pic)
+            self.checked_list.append(self.single_pic)
+            self.table_pics.hide()
         else:
             return
 
         if hasattr(self, 'pic'):
             self.pic.clear()
             self.setLayout(self.vboxMain)
-        self.setPicture(name)
+            print 'found a pic'
+        else: return
+        self.setPicture(self.single_pic)  # Show the selected pic in display area
 
     def setPicture(self, file_name):
         pixmap = QtGui.QPixmap(file_name)
@@ -295,18 +304,26 @@ class Example(QtGui.QWidget):
         self.pic.setPixmap(pixmap)
 
     def resetEverything(self):
+        self.table_pics.setRowCount(0)
+        #self.table_pics.setColumnCount(0)
+        self.table_pics.show()
+
         self.table_pics.clearContents()  # Clears the table
         self.table_pics.reset()
         self.convertButton.setDisabled(False)
+        self.pic.clear()
         if hasattr(self, 'file_list'):
             del self.file_list
+
+        if hasattr(self, 'file_list'):
+            del self.checked_list
         self.progressbar.reset()  # Get the progress bar to zero level
 
 
     def Process(self):
         percentage = True
         self.barState = 0
-        if not self.optionsComboBox.currentText() == 'Percentage %':
+        if 'Percentage' not in self.optionsComboBox.currentText():
             percentage = False
 
         text_in_box = self.optionsLineEdit.text()  # Get value from text box for base width or percentage
@@ -332,15 +349,18 @@ class Example(QtGui.QWidget):
         new_size_list = []
         if percentage:
             percent_factor = math.sqrt(float(text_in_box)/100)  # The base width will be based on this percentage
+            print percent_factor
         else:
             percent_factor = 1
 
         while self.barState < len(self.file_list):
             for img in self.file_list:
-                if img in self.checked_list:
+                if img in self.checked_list or hasattr(self, 'single_pic'):
                     width = self.detail_dict[os.path.basename(img)]['resolution'][0]
-                    print int(width * percent_factor)
-                    size = resizer.resize_image(img, basewidth= int(width * percent_factor))
+                    print width
+                    print int(round(width * percent_factor))
+                    print '-----'
+                    size = resizer.resize_image(img, basewidth=int(round(width * percent_factor)))
                     new_size_list.append(size)
                     self.barState += 1
                     self.progressbar.setValue(self.barState * 100/len(self.checked_list))
