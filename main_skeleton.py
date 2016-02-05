@@ -235,11 +235,11 @@ class Example(QtGui.QWidget):
             resolution_widget = QtGui.QTableWidgetItem(str(resolution_of_pic))  # Convert to widget item
             self.table_pics.setItem(m, 0, photo_name_widget)  # Set name on 1st column
             self.table_pics.setItem(m, 1, resolution_widget)  # Set size of file on 2nd
-            self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 2nd
+            self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 3rd
 
 
         self.table_pics.itemClicked.connect(self.handleItemClicked)  # Connecting to
-        # the function that handles what happens after selecting a checkbox
+        # The function that handles what happens after selecting a checkbox
         self.table_pics.doubleClicked.connect(self.print_hi)
 
         if len(list_with_pics) * 60 > 500:
@@ -283,11 +283,18 @@ class Example(QtGui.QWidget):
         if not hasattr(self, 'file_list'):
             self.file_list = []
             self.checked_list = []
-        self.single_pic = filedialog.getOpenFileName()
+        self.single_pic = filedialog.getOpenFileName() # TODO Write the type of the result variable
         if self.single_pic:  # This is , if someone selects "Cancel"
             self.file_list.append(self.single_pic)
             self.checked_list.append(self.single_pic)
             self.table_pics.hide()
+            size_of_pic = resizer.size_of_photo_in_kilobytes()  # Get size
+            resolution_of_pic = resizer.resolution_of_file(list_with_pics[m])  # Get resolution
+            self.detail_dict[pic] = {'size': size_of_pic,
+                                     'resolution': resolution_of_pic,
+                                     'full_path': os.path.join(str(selected_dir_name), pic)
+                                    }
+
         else:
             return
 
@@ -302,6 +309,7 @@ class Example(QtGui.QWidget):
         pixmap = QtGui.QPixmap(file_name)
         pixmap = pixmap.scaledToHeight(100)
         self.pic.setPixmap(pixmap)
+        self.detail_dict = {}
 
     def resetEverything(self):
         self.table_pics.setRowCount(0)
@@ -349,17 +357,18 @@ class Example(QtGui.QWidget):
         new_size_list = []
         if percentage:
             percent_factor = math.sqrt(float(text_in_box)/100)  # The base width will be based on this percentage
-            print percent_factor
         else:
             percent_factor = 1
 
         while self.barState < len(self.file_list):
             for img in self.file_list:
                 if img in self.checked_list or hasattr(self, 'single_pic'):
-                    width = self.detail_dict[os.path.basename(img)]['resolution'][0]
-                    print width
-                    print int(round(width * percent_factor))
-                    print '-----'
+                    try:
+                        base_name = os.path.basename(img)
+                    except TypeError:
+                        base_name = os.path.basename(str(img))
+                    print self.detail_dict
+                    width = self.detail_dict[base_name]['resolution'][0]
                     size = resizer.resize_image(img, basewidth=int(round(width * percent_factor)))
                     new_size_list.append(size)
                     self.barState += 1
