@@ -137,6 +137,23 @@ class Example(QtGui.QWidget):
         #Group for options
         optionsLabel = QtGui.QLabel("Resize by:")
 
+        #Add a Slider for Quality Selection
+        self.qualitySlider = QtGui.QSlider(QtCore.Qt.Horizontal)
+        self.qualitySlider.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.qualitySlider.setTickPosition(QtGui.QSlider.TicksAbove)
+        self.qualitySlider.setTickInterval(10)
+        self.qualitySlider.setSingleStep(1)
+        self.qualitySlider.setValue(80)  # Set default value at 80
+
+        QualityLabel = QtGui.QLabel("Quality %:")
+
+        self.valueSpinBox = QtGui.QSpinBox()
+        self.valueSpinBox.setRange(1, 100)
+        self.valueSpinBox.setSingleStep(1)
+        self.valueSpinBox.setValue(80)
+        self.qualitySlider.valueChanged.connect(self.valueSpinBox.setValue)  # If slider changes, the Spin Box changes
+        self.valueSpinBox.valueChanged.connect(self.qualitySlider.setValue)  # If Spin Box  changes, the Slider changes
+
         #Declare items in options
         self.optionsComboBox = QtGui.QComboBox()
 
@@ -152,10 +169,17 @@ class Example(QtGui.QWidget):
 
         optionsLayout.addWidget(optionsLabel, 0, 0)
         optionsLayout.addWidget(self.optionsComboBox, 0, 1)
+        optionsLayout.addWidget(QualityLabel, 0, 2)
+        optionsLayout.addWidget(self.valueSpinBox, 0, 3)
+        optionsLayout.addWidget(self.qualitySlider, 0, 4)
         optionsLayout.addWidget(valueLabel, 1, 0)
         optionsLayout.addWidget(self.optionsLineEdit, 1, 1, 1, 2)
-        optionsLayout.setColumnStretch(1, 20)
-        optionsLayout.setColumnStretch(2, 20)
+
+        #optionsLayout.setColumnStretch(1, 20)
+        #optionsLayout.setColumnStretch(2, 20)
+        #optionsLayout.setColumnStretch(3, 20)
+        #optionsLayout.setColumnStretch(4, 20)
+        #optionsLayout.setColumnStretch(5, 20)
         self.optionsGroupBox.setLayout(optionsLayout)
 
     def createDisplayAreaBox(self):
@@ -287,14 +311,14 @@ class Example(QtGui.QWidget):
         if not hasattr(self, 'detail_dict'):
             self.detail_dict = {}
         self.single_pic = str(filedialog.getOpenFileName()) # String converted
-        name = os.path.basename(self.single_pic)
+        file_name = os.path.basename(self.single_pic)
         if self.single_pic:  # This is , if someone selects "Cancel"
             self.file_list.append(self.single_pic)
             self.checked_list.append(self.single_pic)
-            self.table_pics.hide()
+            self.table_pics.hide()  # Hide the table which by default shown on launch
             size_of_pic = resizer.size_of_photo_in_kilobytes(self.single_pic)  # Get size
             resolution_of_pic = resizer.resolution_of_file(self.single_pic)  # Get resolution
-            self.detail_dict[name] = {'size': size_of_pic,
+            self.detail_dict[file_name] = {'size': size_of_pic,
                                      'resolution': resolution_of_pic,
                                      'full_path': self.single_pic,
                                     }
@@ -302,7 +326,7 @@ class Example(QtGui.QWidget):
             return
 
         if hasattr(self, 'pic'):
-            self.pic.clear()
+            self.pic.clear()  # This is for 2nd or more times selection of single picture
             self.setLayout(self.vboxMain)
         else:
             return
