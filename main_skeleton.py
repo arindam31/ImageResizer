@@ -223,7 +223,7 @@ class Example(QtGui.QWidget):
             resolution_of_pic = resizer.resolution_of_file(list_with_pics[m])  # Get resolution
             self.detail_dict[pic] = {'size': size_of_pic,
                                      'resolution': resolution_of_pic,
-                                     'full_path': os.path.join(str(selected_dir_name), pic)
+                                     'full_path': os.path.join(str(selected_dir_name), pic)  # Location of the pic
                                     }
 
             self.checked_list.append(list_with_pics[m])
@@ -283,33 +283,36 @@ class Example(QtGui.QWidget):
         if not hasattr(self, 'file_list'):
             self.file_list = []
             self.checked_list = []
-        self.single_pic = filedialog.getOpenFileName() # TODO Write the type of the result variable
+
+        if not hasattr(self, 'detail_dict'):
+            self.detail_dict = {}
+        self.single_pic = str(filedialog.getOpenFileName()) # String converted
+        name = os.path.basename(self.single_pic)
         if self.single_pic:  # This is , if someone selects "Cancel"
             self.file_list.append(self.single_pic)
             self.checked_list.append(self.single_pic)
             self.table_pics.hide()
-            size_of_pic = resizer.size_of_photo_in_kilobytes()  # Get size
-            resolution_of_pic = resizer.resolution_of_file(list_with_pics[m])  # Get resolution
-            self.detail_dict[pic] = {'size': size_of_pic,
+            size_of_pic = resizer.size_of_photo_in_kilobytes(self.single_pic)  # Get size
+            resolution_of_pic = resizer.resolution_of_file(self.single_pic)  # Get resolution
+            self.detail_dict[name] = {'size': size_of_pic,
                                      'resolution': resolution_of_pic,
-                                     'full_path': os.path.join(str(selected_dir_name), pic)
+                                     'full_path': self.single_pic,
                                     }
-
         else:
             return
 
         if hasattr(self, 'pic'):
             self.pic.clear()
             self.setLayout(self.vboxMain)
-            print 'found a pic'
-        else: return
+        else:
+            return
         self.setPicture(self.single_pic)  # Show the selected pic in display area
+
 
     def setPicture(self, file_name):
         pixmap = QtGui.QPixmap(file_name)
         pixmap = pixmap.scaledToHeight(100)
         self.pic.setPixmap(pixmap)
-        self.detail_dict = {}
 
     def resetEverything(self):
         self.table_pics.setRowCount(0)
@@ -367,7 +370,6 @@ class Example(QtGui.QWidget):
                         base_name = os.path.basename(img)
                     except TypeError:
                         base_name = os.path.basename(str(img))
-                    print self.detail_dict
                     width = self.detail_dict[base_name]['resolution'][0]
                     size = resizer.resize_image(img, basewidth=int(round(width * percent_factor)))
                     new_size_list.append(size)
@@ -375,7 +377,6 @@ class Example(QtGui.QWidget):
                     self.progressbar.setValue(self.barState * 100/len(self.checked_list))
                 else:
                     new_size_list.append('Skipped')
-
 
         for m, size in enumerate(new_size_list):
             photo_size = QtGui.QTableWidgetItem(str(size))

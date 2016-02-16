@@ -39,23 +39,24 @@ Pending:
 Add pull down for extension choice - BMP - Done (now ext is detected and used)
 Add menu bar - Add file, Add folder, Help , About, Reset App
 Double click in table should open image
+Double clicking the single image should open the image in the default image viewer
 Check ALL, Un check ALL buttons to be provided
 Single File image preview
 Add a pop up for finished conversion..no of files converted
-
 Set limits for text box values
 Add quality options in UI
 
 Defects:
-1. Selection of a folder with other contents ...app detects other files too - Fixed
-2. If 100% selected..file size still changes...band width was 1024 by default... - Fixed
+1. Selection of a folder with other contents ...app detects other files too - FIXED
+2. If 100% selected..file size still changes...band width was 1024 by default... - FIXED
 3. Clearing the list does not remove rows...Numbering still present..clicking is possible. - FIXED
 4. Double clicking enables text editing the boxes. - FIXED
 5. Percentage doesnt reduce exactly when image is JPEG - Now image reduced by size of file - FIXED
 6. Choose file , then folder...pics dont show - FIXED
 7. If empty folder selected...does not return error - FIXED - (Showing pop up)
-8. Single file conversion not working...make diff convert branch for each scenario
+8. Single file conversion not working...make diff convert branch for each scenario - FIXED
 9. Image resizing formula works fine for bmp..but for other formats do not work so well
+10: Pressing escape after pressing "select directory" button crashes the app.
 
 
 

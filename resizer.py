@@ -33,7 +33,10 @@ def resize_image(f, basewidth=None, suffix='resized', QUALITY=None):  # f is fil
         hsize = int((float(img.size[1])*float(wpercent)))
 
     img_new = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
-    img_new.save(outfile, image_type.upper(), quality=QUALITY)
+    if QUALITY:
+        img_new.save(outfile, image_type.upper(), quality=QUALITY)
+    else:
+        img_new.save(outfile, image_type.upper())
     del image_type
     new_size = size_of_photo_in_kilobytes(outfile)
     return new_size
