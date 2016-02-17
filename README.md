@@ -25,7 +25,7 @@ Done:
 5) suffix/prefix pull down
 6) Display extension and size of each file - Done
 7) Double clicking should open file with default software
-8) Add Convert Button and attach to resizer - Done
+8) Add Convert Button and attach to "resizer" - Done
 9) Display size of new created file - Done
 10) Popup for no option to convert and integer only - Done
 11) Show resolution - Done
@@ -34,18 +34,18 @@ Done:
 14) Display Estimated size after conversion - DOne
 15) Disable editing of cell - Done
 16) Add pull down for extension choice - BMP - Done (now ext of each file is detected and used)
+17) Add quality options in UI (default can be kept as 80) - DONE
+18) Single File image preview - DONE
 
 Pending:
 
-
 Add menu bar - Add file, Add folder, Help , About, Reset App
-Double click in table should open image
+Double clicking table row should open image
 Double clicking the single image should open the image in the default image viewer
 Check ALL, Un check ALL buttons to be provided
-Single File image preview
 Add a pop up for finished conversion..no of files converted
 Set limits for text box values
-Add quality options in UI (default can be kept as 80) - DONE
+
 
 Defects:
 1. Selection of a folder with other contents ...app detects other files too - FIXED

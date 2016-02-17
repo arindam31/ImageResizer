@@ -387,7 +387,7 @@ class Example(QtGui.QWidget):
         else:
             percent_factor = 1
 
-        setQuality = int(self.valueSpinBox.value()) # Collect quality value from the quality spinner
+        setQuality = int(self.valueSpinBox.value())  # Collect quality value from the quality spinner
 
         while self.barState < len(self.file_list):
             for img in self.file_list:
@@ -409,7 +409,9 @@ class Example(QtGui.QWidget):
             self.table_pics.setItem(m, 3, photo_size)  # Set name on 1st column
 
         self.convertButton.setDisabled(True)  # We don't want to let user press process button again without reset
-
+        self.pop_up_finished = QtGui.QMessageBox.information(self, QtCore.QString('Success'),
+                                           QtCore.QString('%d files converted successfully' %len(self.checked_list)),
+                                           )
 
 def main():
     app = QtGui.QApplication(sys.argv)
