@@ -12,7 +12,6 @@ import sys
 from PyQt4 import QtGui, QtCore
 import os
 import resizer
-import math
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -22,12 +21,12 @@ except AttributeError:
 
 
 class Example(QtGui.QWidget):
-    
+
     def __init__(self):
         super(Example, self).__init__()
         self.initUI()
-        
-    def initUI(self):      
+
+    def initUI(self):
 
         self.layoutManager()
 
@@ -37,6 +36,7 @@ class Example(QtGui.QWidget):
         self.createMenuBar()
 
     def layoutManager(self):
+        #self.createMenuBar()
         self.createTopGroupBox()
         self.createOptionsGroupBox()
         self.createDisplayAreaBox()
@@ -60,8 +60,6 @@ class Example(QtGui.QWidget):
         self.fileMenu = QtGui.QMenu("&File", self)
         self.OptionsMenu = QtGui.QMenu("&Options", self)
         self.HelpMenu = QtGui.QMenu("&Help", self)
-        self.aboutMenu = QtGui.QMenu("&About", self)
-        self.HelpMenu.addMenu(self.aboutMenu)
         menu = QtGui.QMenuBar(self)
         menu.setGeometry(QtCore.QRect(0, 0, 800, 25))
         menu.setObjectName(_fromUtf8("menubar"))
@@ -138,28 +136,11 @@ class Example(QtGui.QWidget):
         #Group for options
         optionsLabel = QtGui.QLabel("Resize by:")
 
-        #Add a Slider for Quality Selection
-        self.qualitySlider = QtGui.QSlider(QtCore.Qt.Horizontal)
-        self.qualitySlider.setFocusPolicy(QtCore.Qt.StrongFocus)
-        self.qualitySlider.setTickPosition(QtGui.QSlider.TicksAbove)
-        self.qualitySlider.setTickInterval(10)
-        self.qualitySlider.setSingleStep(1)
-        self.qualitySlider.setValue(80)  # Set default value at 80
-
-        QualityLabel = QtGui.QLabel("Quality %:")
-
-        self.valueSpinBox = QtGui.QSpinBox()  # This is for quality value display
-        self.valueSpinBox.setRange(1, 100)
-        self.valueSpinBox.setSingleStep(1)
-        self.valueSpinBox.setValue(80)
-        self.qualitySlider.valueChanged.connect(self.valueSpinBox.setValue)  # If slider changes, the Spin Box changes
-        self.valueSpinBox.valueChanged.connect(self.qualitySlider.setValue)  # If Spin Box  changes, the Slider changes
-
         #Declare items in options
         self.optionsComboBox = QtGui.QComboBox()
 
         #Add to combo box
-        self.optionsComboBox.addItem("Percentage % (Size of Image)")
+        self.optionsComboBox.addItem("Percentage %")
         self.optionsComboBox.addItem("Pixel")
 
         #Edit box
@@ -170,17 +151,10 @@ class Example(QtGui.QWidget):
 
         optionsLayout.addWidget(optionsLabel, 0, 0)
         optionsLayout.addWidget(self.optionsComboBox, 0, 1)
-        optionsLayout.addWidget(QualityLabel, 0, 2)
-        optionsLayout.addWidget(self.valueSpinBox, 0, 3)
-        optionsLayout.addWidget(self.qualitySlider, 0, 4)
         optionsLayout.addWidget(valueLabel, 1, 0)
         optionsLayout.addWidget(self.optionsLineEdit, 1, 1, 1, 2)
-
-        #optionsLayout.setColumnStretch(1, 20)
-        #optionsLayout.setColumnStretch(2, 20)
-        #optionsLayout.setColumnStretch(3, 20)
-        #optionsLayout.setColumnStretch(4, 20)
-        #optionsLayout.setColumnStretch(5, 20)
+        optionsLayout.setColumnStretch(1, 20)
+        optionsLayout.setColumnStretch(2, 20)
         self.optionsGroupBox.setLayout(optionsLayout)
 
     def createDisplayAreaBox(self):
@@ -189,13 +163,11 @@ class Example(QtGui.QWidget):
 
         """
         self.displayGroupBox = QtGui.QGroupBox("Display Area")
-        self.pic = QtGui.QLabel('', self)
         self.displayGroupBox.setMaximumHeight(500)
         layout = QtGui.QVBoxLayout()
 
         #List for images list
         self.table_pics = QtGui.QTableWidget(self)
-        self.table_pics.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
 
         self.table_pics.setColumnCount(4)  # Set no of columns needed at first launch
         self.table_pics.setColumnWidth(0, 300)  # 0 in the column number, 300 the width
@@ -206,7 +178,6 @@ class Example(QtGui.QWidget):
         self.table_pics.setHorizontalHeaderLabels(QtCore.QString("Name;Resolution;Size(kb);NewSize(kb)").split(";"))
 
         layout.addWidget(self.table_pics)
-        layout.addWidget(self.pic)
         self.displayGroupBox.setLayout(layout)
 
     def createbottomGroupBox(self):
@@ -225,33 +196,28 @@ class Example(QtGui.QWidget):
 
         selected_dir_name = QtGui.QFileDialog.getExistingDirectory(self, 'Open folder',
                 '/home')
-        if not selected_dir_name:
-            return
-
         list_with_pics = resizer.get_images_list(str(selected_dir_name))
 
-        if not list_with_pics:
-            self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Warning'),
-                                               QtCore.QString('No images found'),
-                                               )
-            return
+        if list_with_pics:
+            self.file_list = [os.path.join(str(selected_dir_name), f) for f in os.listdir(str(selected_dir_name))]
+        else:
+            print 'No images'
+            return 'No images found'
+        file_name_only = [os.path.basename(f) for f in self.file_list]  # Get only file name into a list
 
-
-        file_name_only = [os.path.basename(f) for f in list_with_pics]  # Get only file name into a list
-
-        self.table_pics.setRowCount(len(list_with_pics))  # Based of no of files found, numbering of the rows
+        self.table_pics.setRowCount(len(self.file_list))  # Based of no of files found, numbering of the rows
         self.detail_dict = {}  # Dict with all details
         self.checked_list = []  # List to store checked items
 
         for m, pic in enumerate(file_name_only):
-            size_of_pic = resizer.size_of_photo_in_kilobytes(list_with_pics[m])  # Get size
-            resolution_of_pic = resizer.resolution_of_file(list_with_pics[m])  # Get resolution
+            size_of_pic = resizer.size_of_photo_in_kilobytes(self.file_list[m])  # Get size
+            resolution_of_pic = resizer.resolution_of_file(self.file_list[m])  # Get resolution
             self.detail_dict[pic] = {'size': size_of_pic,
                                      'resolution': resolution_of_pic,
-                                     'full_path': os.path.join(str(selected_dir_name), pic)  # Location of the pic
+                                     'full_path': os.path.join(str(selected_dir_name), pic)
                                     }
 
-            self.checked_list.append(list_with_pics[m])
+            self.checked_list.append(self.file_list[m])
             photo_name_widget = QtGui.QTableWidgetItem(pic)  # Convert to widget item
             photo_name_widget.setFlags(QtCore.Qt.ItemIsUserCheckable |  # Adding checkbox to each row
                                   QtCore.Qt.ItemIsEnabled)
@@ -260,31 +226,19 @@ class Example(QtGui.QWidget):
             resolution_widget = QtGui.QTableWidgetItem(str(resolution_of_pic))  # Convert to widget item
             self.table_pics.setItem(m, 0, photo_name_widget)  # Set name on 1st column
             self.table_pics.setItem(m, 1, resolution_widget)  # Set size of file on 2nd
-            self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 3rd
+            self.table_pics.setItem(m, 2, photo_size_widget)  # Set size of file on 2nd
+        self.table_pics.itemClicked.connect(self.handleItemClicked)
 
-
-        self.table_pics.itemClicked.connect(self.handleItemClicked)  # Connecting to
-        # The function that handles what happens after selecting a checkbox
-        self.table_pics.doubleClicked.connect(self.print_hi)
-
-        if len(list_with_pics) * 60 > 500:
+        if len(self.file_list) * 60 > 500:
             pass
-        #else:
-        #    self.displayGroupBox.setMaximumHeight(len(list_with_pics) * 60)
+        else:
+            self.displayGroupBox.setMaximumHeight(len(self.file_list) * 60)
 
 
         if self.convertButton.isEnabled():
             pass
         else:
             self.convertButton.setDisabled(True)
-        self.file_list = list_with_pics
-
-    def print_hi(self):
-        print 'Hi'
-        row = self.table_pics.currentRow()
-        print "Row no:", row
-        self.item = self.table_pics.item(row, 0)
-        print str(self.item.text())
 
 
     def handleItemClicked(self, item):
@@ -305,34 +259,17 @@ class Example(QtGui.QWidget):
 
     def selectFile(self):
         filedialog = QtGui.QFileDialog(self)
-        if not hasattr(self, 'file_list'):
-            self.file_list = []
-            self.checked_list = []
 
-        if not hasattr(self, 'detail_dict'):
-            self.detail_dict = {}
-        self.single_pic = str(filedialog.getOpenFileName()) # String converted
-        file_name = os.path.basename(self.single_pic)
-        if self.single_pic:  # This is , if someone selects "Cancel"
-            self.file_list.append(self.single_pic)
-            self.checked_list.append(self.single_pic)
-            self.table_pics.hide()  # Hide the table which by default shown on launch
-            size_of_pic = resizer.size_of_photo_in_kilobytes(self.single_pic)  # Get size
-            resolution_of_pic = resizer.resolution_of_file(self.single_pic)  # Get resolution
-            self.detail_dict[file_name] = {'size': size_of_pic,
-                                     'resolution': resolution_of_pic,
-                                     'full_path': self.single_pic,
-                                    }
+        name = filedialog.getOpenFileName()
+        if name:  # This is to handle Cancel action
+            pass
         else:
             return
 
         if hasattr(self, 'pic'):
-            self.pic.clear()  # This is for 2nd or more times selection of single picture
+            self.pic.clear()
             self.setLayout(self.vboxMain)
-        else:
-            return
-        self.setPicture(self.single_pic)  # Show the selected pic in display area
-
+        self.setPicture(name)
 
     def setPicture(self, file_name):
         pixmap = QtGui.QPixmap(file_name)
@@ -340,27 +277,18 @@ class Example(QtGui.QWidget):
         self.pic.setPixmap(pixmap)
 
     def resetEverything(self):
-        self.table_pics.setRowCount(0)
-        #self.table_pics.setColumnCount(0)
-        self.table_pics.show()
-
         self.table_pics.clearContents()  # Clears the table
-        self.table_pics.reset()
         self.convertButton.setDisabled(False)
-        self.pic.clear()
         if hasattr(self, 'file_list'):
             del self.file_list
-
-        if hasattr(self, 'file_list'):
-            del self.checked_list
         self.progressbar.reset()  # Get the progress bar to zero level
 
 
     def Process(self):
         percentage = True
         self.barState = 0
-        if 'Percentage' not in self.optionsComboBox.currentText():
-            percentage = False  # Detect which conversion choice is to be applied % or Pixel
+        if not self.optionsComboBox.currentText() == 'Percentage %':
+            percentage = False
 
         text_in_box = self.optionsLineEdit.text()  # Get value from text box for base width or percentage
         if not text_in_box:
@@ -369,7 +297,7 @@ class Example(QtGui.QWidget):
                                                )
             return
         try:
-            int(text_in_box)  # If integer conversion fails, we will get an exception
+            int(text_in_box)
         except Exception:
             self.pop_up_warning = QtGui.QMessageBox.warning(self, QtCore.QString('Warning'),
                                            QtCore.QString('You must enter Integer only'),
@@ -384,35 +312,26 @@ class Example(QtGui.QWidget):
 
         new_size_list = []
         if percentage:
-            percent_factor = math.sqrt(float(text_in_box)/100)  # The base width will be based on this percentage
+            percent_factor = float(text_in_box)/100  # The base width will be based on this percentage
         else:
             percent_factor = 1
 
-        setQuality = int(self.valueSpinBox.value())  # Collect quality value from the quality spinner
-
         while self.barState < len(self.file_list):
             for img in self.file_list:
-                if img in self.checked_list or hasattr(self, 'single_pic'):
-                    try:
-                        base_name = os.path.basename(img)
-                    except TypeError:
-                        base_name = os.path.basename(str(img))
-                    width = self.detail_dict[base_name]['resolution'][0]
-                    size = resizer.resize_image(img, basewidth=int(round(width * percent_factor)), QUALITY=setQuality)
+                if img in self.checked_list:
+                    width = self.detail_dict[os.path.basename(img)]['resolution'][0]
+                    size = resizer.resize_image(img, basewidth= int(width * percent_factor))
                     new_size_list.append(size)
                     self.barState += 1
                     self.progressbar.setValue(self.barState * 100/len(self.checked_list))
-                else:
-                    new_size_list.append('Skipped')
+
 
         for m, size in enumerate(new_size_list):
             photo_size = QtGui.QTableWidgetItem(str(size))
             self.table_pics.setItem(m, 3, photo_size)  # Set name on 1st column
 
-        self.convertButton.setDisabled(True)  # We don't want to let user press process button again without resetting
-        self.pop_up_finished = QtGui.QMessageBox.information(self, QtCore.QString('Success'),
-                                           QtCore.QString('%d files converted successfully' %len(self.checked_list)),
-                                           )
+        self.convertButton.setDisabled(True)  # We don't want to let user press process button again without reset
+
 
 def main():
     app = QtGui.QApplication(sys.argv)

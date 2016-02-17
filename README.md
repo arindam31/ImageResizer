@@ -36,6 +36,7 @@ Done:
 16) Add pull down for extension choice - BMP - Done (now ext of each file is detected and used)
 17) Add quality options in UI (default can be kept as 80) - DONE
 18) Single File image preview - DONE
+19) Add a pop up for finished conversion..no of files converted - DONE
 
 Pending:
 
@@ -43,9 +44,7 @@ Add menu bar - Add file, Add folder, Help , About, Reset App
 Double clicking table row should open image
 Double clicking the single image should open the image in the default image viewer
 Check ALL, Un check ALL buttons to be provided
-Add a pop up for finished conversion..no of files converted
 Set limits for text box values
-
 
 Defects:
 1. Selection of a folder with other contents ...app detects other files too - FIXED
@@ -58,7 +57,3 @@ Defects:
 8. Single file conversion not working...make diff convert branch for each scenario - FIXED
 9. Image resizing formula works fine for bmp..but for other formats do not work so well
 10: Pressing escape after pressing "select directory" button crashes the app.
-
-
-
-
