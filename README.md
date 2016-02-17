@@ -45,7 +45,7 @@ Check ALL, Un check ALL buttons to be provided
 Single File image preview
 Add a pop up for finished conversion..no of files converted
 Set limits for text box values
-Add quality options in UI (default can be kept as 80)
+Add quality options in UI (default can be kept as 80) - DONE
 
 Defects:
 1. Selection of a folder with other contents ...app detects other files too - FIXED

@@ -16,8 +16,8 @@ def get_images_list(dir_loc):
                 final_files_list.append(os.path.join(dir_loc, f))
     return final_files_list
 
-def resize_image(f, basewidth=None, suffix='resized', QUALITY=None):  # f is filename with complete path
-    import imghdr
+def resize_image(f, basewidth=None, suffix='resized', QUALITY=80):  # f is filename with complete path
+    import imghdr  # This module can tell us what is the type of image e.g jpeg, bmp etc
     image_type = imghdr.what(f)
     if not basewidth:
         basewidth = default_basewidth
@@ -27,18 +27,15 @@ def resize_image(f, basewidth=None, suffix='resized', QUALITY=None):  # f is fil
     except IOError:
         return 'Invalid file'
 
-    outfile = f.split('.')[0] + '_%s.%s' % (suffix, image_type)
+    outfile = f.split('.')[0] + '_%s.%s' % (suffix, image_type)  # We chip the extension and append a suffix
     if basewidth:
         wpercent = (basewidth/float(img.size[0]))
         hsize = int((float(img.size[1])*float(wpercent)))
 
     img_new = img.resize((basewidth, hsize), PIL.Image.ANTIALIAS)
-    if QUALITY:
-        img_new.save(outfile, image_type.upper(), quality=QUALITY)
-    else:
-        img_new.save(outfile, image_type.upper())
+    img_new.save(outfile, image_type.upper(), quality=QUALITY)  # Saving the new image with the name %outfile%
     del image_type
-    new_size = size_of_photo_in_kilobytes(outfile)
+    new_size = size_of_photo_in_kilobytes(outfile)  # Calculating size of new file
     return new_size
 
 def resolution_of_file(file_path):
@@ -59,11 +56,10 @@ def size_of_photo_in_kilobytes(full_file_path):
 
 def resize_list_of_images(list_image, basewidth=None, percent=None):
     #Note: list_image must be a list of full image paths
-    list_converted = []
+    list_converted = []  # Will contain sizes of converted images
     for image in list_image:
         new_size = resize_image(image, basewidth, percent)
         list_converted.append(new_size)
-
     return list_converted
 
 

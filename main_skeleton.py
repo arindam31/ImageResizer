@@ -147,7 +147,7 @@ class Example(QtGui.QWidget):
 
         QualityLabel = QtGui.QLabel("Quality %:")
 
-        self.valueSpinBox = QtGui.QSpinBox()
+        self.valueSpinBox = QtGui.QSpinBox()  # This is for quality value display
         self.valueSpinBox.setRange(1, 100)
         self.valueSpinBox.setSingleStep(1)
         self.valueSpinBox.setValue(80)
@@ -387,6 +387,8 @@ class Example(QtGui.QWidget):
         else:
             percent_factor = 1
 
+        setQuality = int(self.valueSpinBox.value()) # Collect quality value from the quality spinner
+
         while self.barState < len(self.file_list):
             for img in self.file_list:
                 if img in self.checked_list or hasattr(self, 'single_pic'):
@@ -395,7 +397,7 @@ class Example(QtGui.QWidget):
                     except TypeError:
                         base_name = os.path.basename(str(img))
                     width = self.detail_dict[base_name]['resolution'][0]
-                    size = resizer.resize_image(img, basewidth=int(round(width * percent_factor)))
+                    size = resizer.resize_image(img, basewidth=int(round(width * percent_factor)), QUALITY=setQuality)
                     new_size_list.append(size)
                     self.barState += 1
                     self.progressbar.setValue(self.barState * 100/len(self.checked_list))
